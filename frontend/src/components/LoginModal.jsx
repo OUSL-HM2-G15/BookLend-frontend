@@ -1,34 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 
-const LoginModal = ({ isOpen, onClose }) => {
-    const [email, setEmail] = useState('');
+const LoginModal = ({ isOpen, onClose, onOpenRegister }) => {
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [msg, setMsg] = useState('');
     const [loading, setLoading] = useState(false);
+    
 
-    // NEW : Password visible toggle
+    // Password visible toggle
     const [showPassword, setShowPassword] = useState(false);
 
-    // Handles the login form submit
+    // When modal closes, clear data (for safety)
+    useEffect(() => {
+        if (!isOpen) {
+            setUsername('');
+            setPassword('');
+            setMsg('');
+            setShowPassword(false);
+        }
+    }, [isOpen]);
+
+    // It Handles the login form submit
     const handleSubmit = async (e) => {
         e.preventDefault();
         setMsg('');
         setLoading(true);
         try {
 
-            // Simulate API call delay for demo
+            // Simulate API call delay here
             await new Promise((r) => setTimeout(r, 1000));
 
             // Simulated success login, replace with real fetch in production
-            if (email === "test@example.com" && password === "123456") {
-                setMsg('✅ Login successful!');
+            if (username === "testuser" && password === "123456") {
+                setMsg(' Login successful!');
+                // Can save logged user here later
                 onClose();
             } else {
-                setMsg('❌ Invalid credentials');
+                setMsg(' Invalid credentials');
             }
         } catch (error) {
-            setMsg('❌ Error connecting to server.');
+            setMsg(' Error connecting to server.');
         } finally {
             setLoading(false);
         }
@@ -62,8 +74,8 @@ const LoginModal = ({ isOpen, onClose }) => {
                             id='username'
                             type="text"
                             className="w-full border border-gray-300 p-2 rounded focus:outline-blue-500"
-                            value={Text}
-                            onChange={(e) => setEmail(e.target.value)}
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
                             required />
                     </div>
                     <div className="relative">
@@ -72,7 +84,7 @@ const LoginModal = ({ isOpen, onClose }) => {
                         </label>
                         <input
                             id='password'
-                            type={password ? 'text' : 'password'} // NEW: Toggle type based on showPassword
+                            type={showPassword ? 'text' : 'password'} // Based on showPassword
                             className="w-full border border-gray-300 p-2 rounded focus:outline-blue-500"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -84,9 +96,9 @@ const LoginModal = ({ isOpen, onClose }) => {
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
                             className="absolute top-8 right-3 text-gray-500 hover:text-indigo-600"
-    aria-label={showPassword ? "Hide password" : "Show password"}
+                            aria-label={showPassword ? "Hide password" : "Show password"}
                         >
-                            {showPassword ? (
+                            {showPassword ? ( //Eye off
                                 <svg
                                     xmlns="https://icons8.com/icon/85028/eye"
                                     width="24"
@@ -103,6 +115,7 @@ const LoginModal = ({ isOpen, onClose }) => {
                                 </svg>
 
                             ) : (
+                                //Eye
                                 <svg
                                     xmlns="https://icons8.com/icon/96151/invisible"
                                     width="24"
@@ -141,12 +154,14 @@ const LoginModal = ({ isOpen, onClose }) => {
                     ✖
 
                 </button>
+                
+                {/* Register link */}
 
                 <p className="mt-6 text-center text-gray-600">
                     Don’t have an account?{' '}
                     <button
                         type="button"
-                        onClick={() => alert('Redirect to Register page')}
+                        onClick={() =>{ onClose(); onOpenRegister();}}
                         className="text-indigo-600 font-semibold hover:underline"
                     >
                         Register
