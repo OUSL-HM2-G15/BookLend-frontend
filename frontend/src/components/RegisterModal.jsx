@@ -193,19 +193,19 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
                         </label>
                         <div className="w-2/3 flex">
                             <div className="flex w-full">
-            <span className="flex items-center px-3 bg-gray-100 border border-r-0 rounded-l text-gray-700">
-                +94
-            </span>
-                        <input
-                            id="contactNumber"
-                            name="contactNumber"
-                            type="text"
-                            value={form.contactNumber}
-                            onChange={handleChange}
-                            required
-                            className="flex-1 p-2 border border-l-0 rounded-r focus:outline-blue-500"
-                        />
-                        </div>
+                                <span className="flex items-center px-3 bg-gray-100 border border-r-0 rounded-l text-gray-700">
+                                    +94
+                                </span>
+                                <input
+                                    id="contactNumber"
+                                    name="contactNumber"
+                                    type="text"
+                                    value={form.contactNumber}
+                                    onChange={handleChange}
+                                    required
+                                    className="flex-1 p-2 border border-l-0 rounded-r focus:outline-blue-500"
+                                />
+                            </div>
                         </div>
                     </div>
 
@@ -215,21 +215,21 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
                             WhatsApp Number:
                         </label>
                         <div className="w-2/3 flex">
-                           <div className="flex w-full">
+                            <div className="flex w-full">
 
-            <span className="flex items-center px-3 bg-gray-100 border border-r-0 rounded-l text-gray-700">
-                +94
-            </span>
-                        <input
-                            id="whatsappNumber"
-                            name="whatsappNumber"
-                            type="text"
-                            value={form.whatsappNumber}
-                            onChange={handleChange}
-                            required
-                            className="flex-1 p-2 border border-l-0 rounded-r focus:outline-blue-500"
-                        />
-                        </div>
+                                <span className="flex items-center px-3 bg-gray-100 border border-r-0 rounded-l text-gray-700">
+                                    +94
+                                </span>
+                                <input
+                                    id="whatsappNumber"
+                                    name="whatsappNumber"
+                                    type="text"
+                                    value={form.whatsappNumber}
+                                    onChange={handleChange}
+                                    required
+                                    className="flex-1 p-2 border border-l-0 rounded-r focus:outline-blue-500"
+                                />
+                            </div>
                         </div>
                     </div>
 

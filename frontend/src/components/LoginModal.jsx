@@ -6,7 +6,7 @@ const LoginModal = ({ isOpen, onClose, onOpenRegister }) => {
     const [password, setPassword] = useState('');
     const [msg, setMsg] = useState('');
     const [loading, setLoading] = useState(false);
-    
+
 
     // Password visible toggle
     const [showPassword, setShowPassword] = useState(false);
@@ -154,14 +154,14 @@ const LoginModal = ({ isOpen, onClose, onOpenRegister }) => {
                     ✖
 
                 </button>
-                
+
                 {/* Register link */}
 
                 <p className="mt-6 text-center text-gray-600">
                     Don’t have an account?{' '}
                     <button
                         type="button"
-                        onClick={() =>{ onClose(); onOpenRegister();}}
+                        onClick={() => { onClose(); onOpenRegister(); }}
                         className="text-indigo-600 font-semibold hover:underline"
                     >
                         Register
