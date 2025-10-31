@@ -1,3 +1,4 @@
+ feature/borrowed-books-ui
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import LoginModal from "./components/LoginModal";
@@ -48,10 +49,20 @@ function LandingPage() {
           setShowLogin(true);  // Open the login modal
         }}
       />
+=======
+import Footer from './components/Footer';
+
+function App() {
+  return (
+    <div>
+      <h1>Welcome to BookLend Application</h1>
+    <Footer />
+ feature/borrowed-books-ui
     </div>
   );
 }
 
+feature/borrowed-books-ui
 /**
  * App with routes
  */
@@ -67,3 +78,6 @@ export default function App() {
     </Router>
   );
 }
+
+export default App;
+feature/borrowed-books-ui
