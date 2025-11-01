@@ -1,14 +1,18 @@
 import Dashboard from "./pages/Dashboard"; 
-import { Routes, Route, Navigate, BrowserRouter} from "react-router-dom";
+import { Routes, Route, BrowserRouter} from "react-router-dom";
+import Home from "./pages/Home";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Default redirect to /dashboard */}
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        {/* "*" → allows nested routing */}
+        {/* Default route → Home page */}
+        <Route path="/" element={<Home />} />
+
+        {/* Dashboard route */}
         <Route path="/dashboard/*" element={<Dashboard />} />
+
+        {/* Catch-all for invalid paths */}
         <Route path="*" element={<div>Page not found</div>} />
       </Routes>
     </BrowserRouter>
