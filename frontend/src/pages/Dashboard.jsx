@@ -1,12 +1,23 @@
-import DashboardLayout from "../layouts/DashboardLayout";
+import DashboardHeader from "../layouts/DashboardLayout";
+import Sidebar from "../components/DashboardSideBar";
+import { Routes, Route, Navigate } from "react-router-dom";
+import Explore from "./Explore";
+import MyBooks from "./MyBooks";
 
-const Dashboard = () => {
+export default function Dashboard () {
   return (
-    <DashboardLayout>
-      <h1 className="text-3xl font-bold">Dashboard</h1>
-      <p className="text-gray-600 mt-2">Welcome to your BookLend dashboard!</p>
-    </DashboardLayout>
+    <div className="bg-white min-h-screen">
+      <DashboardHeader />
+      <div className="flex">
+        <Sidebar />
+        <main className="flex-1 ml-64 mt-16 p-6 h-[calc(100vh-4rem)] overflow-y-auto">
+          <Routes>
+            <Route path="/" element={<Navigate to="explore" replace />} />
+            <Route path="explore" element={<Explore />} />
+            <Route path="my-books" element={<MyBooks />} />
+          </Routes>
+        </main>
+      </div>
+    </div>
   );
-};
-
-export default Dashboard;
+}
