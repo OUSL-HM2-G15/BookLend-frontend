@@ -68,9 +68,8 @@ function App() {
         {/* Catch-all */}
         <Route path="*" element={<div>Page not found</div>} />
       </Routes>
-      <Footer />
     </Router>
   );
 }
-
+export default App
 
