@@ -61,10 +61,6 @@ const BorrowedBooks = () => {
   return (
     <>
       {/* Login Modal */}
-      {showLoginModal && (
-        <LoginModal onClose={() => setShowLoginModal(false)} />
-
-      )}
       {showLoginModal && <LoginModal onClose={() => setShowLoginModal(false)} />}
 
       {/* Dashboard layout */}

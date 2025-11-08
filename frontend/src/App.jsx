@@ -1,10 +1,10 @@
- feature/borrowed-books-ui
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import LoginModal from "./components/LoginModal";
 import RegisterModal from './components/RegisterModal';
 import Dashboard from "./pages/Dashboard"
 import BorrowedBooks from "./pages/BorrowedBooks"
+import Footer from "./components/Footer"
 
 /**
  * Landing Page — the main homepage with Sign In
@@ -49,35 +49,27 @@ function LandingPage() {
           setShowLogin(true);  // Open the login modal
         }}
       />
-=======
-import Footer from './components/Footer';
-
-function App() {
-  return (
-    <div>
-      <h1>Welcome to BookLend Application</h1>
-    <Footer />
- feature/borrowed-books-ui
     </div>
   );
 }
-
-feature/borrowed-books-ui
-/**
- * App with routes
- */
-
-export default function App() {
+function App() {
   return (
     <Router>
       <Routes>
+        {/* Landing page */}
         <Route path="/" element={<LandingPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+
+        {/* Dashboard */}
+        <Route path="/dashboard/*" element={<Dashboard />} />
+
+        {/* Borrowed Books page */}
         <Route path="/borrowed-books" element={<BorrowedBooks />} />
+
+        {/* Catch-all */}
+        <Route path="*" element={<div>Page not found</div>} />
       </Routes>
     </Router>
   );
 }
+export default App
 
-export default App;
-feature/borrowed-books-ui
