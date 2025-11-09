@@ -11,12 +11,10 @@ const DashboardLayout = ({ children }) => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-scree0 bg-gray-50n">
       {/* Header */}
       <Header onLogout={handleLogout} />
 
-      {/* Main area: sidebar + content */}
-      <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
         <div className="w-64 bg-white border-r flex flex-col min-h-0">
           <Sidebar />
@@ -26,7 +24,7 @@ const DashboardLayout = ({ children }) => {
         <main className="flex-1 p-6 overflow-auto min-h-0">
           {children}
         </main>
-      </div>
+    
 
       {/* Footer */}
       <Footer />
