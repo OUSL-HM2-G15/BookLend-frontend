@@ -3,8 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-route
 import LoginModal from "./components/LoginModal";
 import RegisterModal from './components/RegisterModal';
 import Dashboard from "./pages/Dashboard"
-import BorrowedBooks from "./pages/BorrowedBooks"
-import Footer from "./components/Footer"
+
 
 /**
  * Landing Page — the main homepage with Sign In
@@ -61,10 +60,6 @@ function App() {
 
         {/* Dashboard */}
         <Route path="/dashboard/*" element={<Dashboard />} />
-
-        {/* Borrowed Books page */}
-        <Route path="/borrowed-books" element={<BorrowedBooks />} />
-
         {/* Catch-all */}
         <Route path="*" element={<div>Page not found</div>} />
       </Routes>

@@ -1,4 +1,3 @@
-import DashboardLayout from "../layouts/DashboardLayout"
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LoginModal from "../components/LoginModal";
@@ -64,7 +63,7 @@ const BorrowedBooks = () => {
       {showLoginModal && <LoginModal onClose={() => setShowLoginModal(false)} />}
 
       {/* Dashboard layout */}
-      <DashboardLayout onLogout={handleLogout}>
+      <di onLogout={handleLogout}>
         <div className="max-w-3xl mx-auto">
           <h1 className="text-3xl mb-8 text-black tracking-wide leading-snug">
             My Borrowed Books
@@ -129,9 +128,9 @@ const BorrowedBooks = () => {
             ))}
           </div>
         </div>
-      </DashboardLayout>
+      </di>
     </>
   );
 };
 
-export default BorrowedBooks;
+export default BorrowedBooks;     

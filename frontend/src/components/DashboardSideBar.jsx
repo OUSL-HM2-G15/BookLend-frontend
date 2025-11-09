@@ -5,7 +5,7 @@ const Sidebar = () => {
   const links = [
     { name: "Explore", path: "/dashboard/explore" }, // not use file paths, need route paths
     { name: "My Books", path: "/dashboard/my-books" },
-    { name: "My Borrowed Books", path: "/borrowed-books" },
+    { name: "My Borrowed Books", path: "/dashboard/borrowed-books" },
     { name: "My Lended Books", path: "/dashboard/my-lended-books" },
     { name: "Requests Received", path: "/dashboard/requests-received" },
     { name: "Requests Posted", path: "/dashboard/requests-posted" },
