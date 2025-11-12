@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
 
-const LoginModal = ({ isOpen, onClose, onOpenRegister }) => {
+const LoginModal = ({ isOpen, onClose, onOpenRegister, onLoginSuccess, }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [msg, setMsg] = useState('');
     const [loading, setLoading] = useState(false);
+
 
 
     // Password visible toggle
@@ -35,7 +36,10 @@ const LoginModal = ({ isOpen, onClose, onOpenRegister }) => {
             if (username === "testuser" && password === "123456") {
                 setMsg(' Login successful!');
                 // Can save logged user here later
-                onClose();
+                setTimeout(() => {
+                    onClose(); // Close modal
+                    onLoginSuccess(); // Navigate to Dashboard or Borrowed Books
+                }, 1000);
             } else {
                 setMsg(' Invalid credentials');
             }
