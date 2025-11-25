@@ -1,6 +1,6 @@
-// import React from "react";
+import  { useState } from "react";
 //import axios from "axios";
-//import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // Flower Logo Component
 const FlowerLogo = () => (
@@ -13,8 +13,16 @@ const FlowerLogo = () => (
     <path d="M12 2a1 1 0 0 1 1 1v2.07A7.002 7.002 0 0 1 19.93 11H22a1 1 0 1 1 0 2h-2.07A7.002 7.002 0 0 1 13 18.93V21a1 1 0 1 1-2 0v-2.07A7.002 7.002 0 0 1 4.07 13H2a1 1 0 1 1 0-2h2.07A7.002 7.002 0 0 1 11 4.07V2a1 1 0 0 1 1-1zM12 8a4 4 0 1 0 0 8a4 4 0 0 0 0-8z" />
   </svg>
 );
+// for test logout right now
+const DashboardHeader = ({ user , onLogout }) => {
+  const [showConfirm, setShowConfirm] = useState(false);
+  const navigate = useNavigate();
 
-const DashboardHeader = ({ user }) => { 
+  const handleConfirmLogout = () => {
+    if (onLogout) onLogout(); // call parent logout handler
+    setShowConfirm(false);
+    navigate("/"); // redirect to sign-in or home
+  };
   // const navigate = useNavigate();
 
   // 🔹 Handle logout
@@ -62,6 +70,7 @@ const DashboardHeader = ({ user }) => {
 
             <button
               //onClick={handleLogout}
+              onClick={() => setShowConfirm(true)}
               className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition"
             >
               Logout
@@ -77,6 +86,28 @@ const DashboardHeader = ({ user }) => {
 
         </div>
       </div>
+      {/* Logout Confirmation Modal */}
+      {showConfirm && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30">
+          <div className="bg-white p-6 rounded shadow-lg text-center">
+            <p className="text-gray-700 mb-4">Are you sure you want to log out?</p>
+            <div className="flex justify-center gap-3">
+              <button
+                onClick={handleConfirmLogout}
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+              >
+                Yes, Logout
+              </button>
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

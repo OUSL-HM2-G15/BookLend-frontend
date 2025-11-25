@@ -20,6 +20,3 @@ function App() {
 }
 
 export default App;
-
-// notes:
-// - If you later add top-level routes (like /login), just add more <Route> entries.

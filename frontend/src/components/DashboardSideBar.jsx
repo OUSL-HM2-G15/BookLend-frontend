@@ -5,14 +5,14 @@ const Sidebar = () => {
   const links = [
     { name: "Explore", path: "/dashboard/explore" }, // not use file paths, need route paths
     { name: "My Books", path: "/dashboard/my-books" },
-//     { name: "My Borrowed Books", path: "/dashboard/my-borrowed-books" },
-//     { name: "My Lended Books", path: "/dashboard/my-lended-books" },
-//     { name: "Requests Received", path: "/dashboard/requests-received" },
-//     { name: "Requests Posted", path: "/dashboard/requests-posted" },
+    { name: "My Borrowed Books", path: "/dashboard/borrowed-books" },
+    { name: "My Lended Books", path: "/dashboard/my-lended-books" },
+    { name: "Requests Received", path: "/dashboard/requests-received" },
+    { name: "Requests Posted", path: "/dashboard/requests-posted" },
   ];
 
   return (
-    <aside className="fixed top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-white border-r border-gray-300 p-4">
+    <aside className="fixed top-16 left-0 bottom-16 w-64 bg-white border-r p-4 overflow-auto">
       <nav className="flex flex-col space-y-2">
          {links.map((link) => (
           <NavLink
