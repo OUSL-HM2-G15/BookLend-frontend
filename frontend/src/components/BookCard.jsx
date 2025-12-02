@@ -8,11 +8,20 @@ function BookCard({ book }) {
     setIsModalVisible(true);
   };
 
-  const handleConfirm = () => {
+const handleConfirm = async () => {
+  try {
+    // Call API to send borrow request
+
     setIsModalVisible(false);
-    // Need to call API here to borrow the book
-    message.success(`You have requested to borrow "${book.title}" Please wait until the owner approves your request.`, 4);
-  };
+
+    message.success(
+      `You have requested to borrow "${book.title}". Please wait until the owner approves your request.`,
+      4
+    );
+  } catch (error) {
+    message.error("Failed to send borrow request. Try again.");
+  }
+};
 
   const handleCancel = () => {
     setIsModalVisible(false);
