@@ -45,7 +45,7 @@ function Explore() {
   };
 
   fetchData();
-});
+}, []);
 
   // Handle search and filter
   const handleSearch = () => {
@@ -63,13 +63,13 @@ function Explore() {
     if (selectedCategory !== "") {
       results = results.filter(
         // ? means optional chaining to avoid errors if category is undefined
-        (book) => book.category?.name === selectedCategory 
+        (book) => book.category?.categoryName === selectedCategory 
       );
     }
 
     if (selectedLocation !== "") {
       results = results.filter(
-        (book) => book.availableLocation?.name === selectedLocation
+        (book) => book.availableLocation?.locationName === selectedLocation
       );
     }
 
@@ -101,8 +101,8 @@ function Explore() {
         >
           <option value="">All Categories</option>
           {categories.map((cat) => (
-            <option key={cat.category_id} value={cat.category_name}>
-              {cat.category_name}
+            <option key={cat.categoryId} value={cat.categoryName}>
+              {cat.categoryName}
             </option>
           ))}
         </select>
@@ -115,8 +115,8 @@ function Explore() {
         >
           <option value="">All Locations</option>
           {locations.map((loc) => (
-            <option key={loc.location_id} value={loc.location_name}>
-              {loc.location_name}
+            <option key={loc.locationId} value={loc.locationName}>
+              {loc.locationName}
             </option>
           ))}
         </select>
