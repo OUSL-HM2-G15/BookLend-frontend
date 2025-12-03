@@ -22,31 +22,25 @@ function Explore() {
   // Request Book Popup state
   // const [showRequestPopup, setShowRequestPopup] = useState(false);
 
-
-  const API_URL = process.env.REACT_APP_API_URL;
-
-  // Fetch books
+  // Fetch books, locations, and categories on component mount
   useEffect(() => {
-    axios
-      .get(`${API_URL}/books`)
-      .then((res) => {
-        setBooks(res.data);
-        setFilteredBooks(res.data);
-      })
-      .catch((err) => {
-        console.error("Error fetching books:", err);
-        message.error({
-          content: "Failed to load books. Please try again!",
-          duration: 3,
-        });
-      });
-  }, [API_URL]);
+  const fetchData = async () => {
+    try {
+      const booksRes = await axios.get("/books");
+      const locationsRes = await axios.get("/locations");
+      const categoriesRes = await axios.get("/categories");
 
-  // Fetch dropdown data
-  useEffect(() => {
-    axios.get(`${API_URL}/locations`).then((res) => setLocations(res.data));
-    axios.get(`${API_URL}/categories`).then((res) => setCategories(res.data));
-  }, [API_URL]);
+      setBooks(booksRes.data);
+      setFilteredBooks(booksRes.data);
+      setLocations(locationsRes.data);
+      setCategories(categoriesRes.data);
+    } catch (err) {
+      message.error("Failed to load data. Please try again!");
+    }
+  };
+
+  fetchData();
+}, []);
 
   // Handle search and filter
   const handleSearch = () => {
