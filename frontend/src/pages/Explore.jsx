@@ -22,25 +22,30 @@ function Explore() {
   // Request Book Popup state
   // const [showRequestPopup, setShowRequestPopup] = useState(false);
 
-  // Fetch books, locations, and categories on component mount
+  const API_URL = process.env.REACT_APP_API_URL;
+  
+ // Fetch books, locations, and categories on component mount
   useEffect(() => {
   const fetchData = async () => {
     try {
-      const booksRes = await axios.get("/books");
-      const locationsRes = await axios.get("/locations");
-      const categoriesRes = await axios.get("/categories");
+      const booksRes = await axios.get(`${API_URL}/books`);
+      const locationsRes = await axios.get(`${API_URL}/locations`);
+      const categoriesRes = await axios.get(`${API_URL}/categories`);
 
       setBooks(booksRes.data);
       setFilteredBooks(booksRes.data);
       setLocations(locationsRes.data);
       setCategories(categoriesRes.data);
     } catch (err) {
-      message.error("Failed to load data. Please try again!");
+      message.error({
+        content: "Failed to load data. Please try again!",
+        duration: 3,
+      });
     }
   };
 
   fetchData();
-}, []);
+});
 
   // Handle search and filter
   const handleSearch = () => {
