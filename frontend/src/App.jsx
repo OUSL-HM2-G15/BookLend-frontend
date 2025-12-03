@@ -10,7 +10,7 @@ function App() {
         <Route path="/" element={<Home />} />
 
         {/* Dashboard route */}
-        <Route path="/dashboard/*" element={<Dashboard />} />
+        <Route path="/*" element={<Dashboard />} />
 
         {/* Catch-all for invalid paths */}
         <Route path="*" element={<div>Page not found</div>} />

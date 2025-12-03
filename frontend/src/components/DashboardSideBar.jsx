@@ -3,12 +3,12 @@ import { NavLink } from "react-router-dom";
 
 const Sidebar = () => {
   const links = [
-    { name: "Explore", path: "/dashboard/explore" }, // not use file paths, need route paths
-    { name: "My Books", path: "/dashboard/my-books" },
-//     { name: "My Borrowed Books", path: "/dashboard/my-borrowed-books" },
-//     { name: "My Lended Books", path: "/dashboard/my-lended-books" },
-//     { name: "Requests Received", path: "/dashboard/requests-received" },
-//     { name: "Requests Posted", path: "/dashboard/requests-posted" },
+    { name: "Explore", path: "/explore" }, // not use file paths, need route paths
+    { name: "My Books", path: "/my-books" },
+//     { name: "My Borrowed Books", path: "/my-borrowed-books" },
+//     { name: "My Lended Books", path: "/my-lended-books" },
+//     { name: "Requests Received", path: "/requests-received" },
+//     { name: "Requests Posted", path: "/requests-posted" },
   ];
 
   return (
