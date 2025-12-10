@@ -1,4 +1,4 @@
-// import React from "react";
+import React from "react";
 //import axios from "axios";
 //import { useNavigate } from "react-router-dom";
 
@@ -14,7 +14,7 @@ const FlowerLogo = () => (
   </svg>
 );
 
-const DashboardHeader = ({ user }) => { 
+const DashboardHeader = ({ user, setShowAddBook }) => { 
   // const navigate = useNavigate();
 
   // 🔹 Handle logout
@@ -31,8 +31,7 @@ const DashboardHeader = ({ user }) => {
   //   }
   // };
 
-  // 🔹 Navigation handlers
-  // const handleAddBook = () => navigate("/add-book");
+  //  Navigation handlers
   // const handleProfile = () => navigate("/profile");
 
   const userImage = user?.profilePic || "https://via.placeholder.com/40";
@@ -54,7 +53,7 @@ const DashboardHeader = ({ user }) => {
           {/* Right Side: Buttons + Profile */}
           <div className="flex items-center space-x-4">
             <button
-              //onClick={handleAddBook}
+              onClick={() => setShowAddBook(true)}
               className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
             >
               + Add Book
