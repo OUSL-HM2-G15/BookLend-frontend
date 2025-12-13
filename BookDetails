@@ -8,25 +8,36 @@ const BookDetails = () => {
   const { id } = useParams(); // URL: /book/:id
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(""); 
 
   // Fetch book data from backend
   useEffect(() => {
     const fetchBook = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/books/${id}`);
+        const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/books/${id}`);
         setBook(res.data);
       } catch (err) {
         console.error("Failed to load book:", err);
+        setError("Unable to load book details. Please try again later.");
       } finally {
         setLoading(false);
       }
     };
+
     fetchBook();
   }, [id]);
 
   if (loading) {
     return (
       <div className="text-center mt-20 text-xl font-semibold">Loading...</div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center mt-20 text-red-600 font-semibold">
+        {error}
+      </div>
     );
   }
 
