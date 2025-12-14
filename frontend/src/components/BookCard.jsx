@@ -34,7 +34,7 @@ const handleConfirm = async () => {
         {/* Book Image */}
         <div className="h-48 w-full overflow-hidden rounded-lg bg-gray-100">
           <img
-            src={book.image || "https://via.placeholder.com/150"} 
+            src={book.imageUrl || "https://via.placeholder.com/150"} 
             alt={book.title}
             className="w-full h-full object-cover"
           />

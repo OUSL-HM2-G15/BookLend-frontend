@@ -1,13 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import DashboardHeader from "../components/DashboardHeader";
 import Sidebar from "../components/DashboardSideBar";
+import AddBook from "../components/AddBook";
+
 import { Outlet } from "react-router-dom";
 
 export default function DashboardLayout({ user }) {
+    const [showAddBook, setShowAddBook] = useState(false);
+
   return (
     <div className="bg-white min-h-screen">
       {/* Fixed Header */}
-      <DashboardHeader user={user} />
+      <DashboardHeader user={user} setShowAddBook={setShowAddBook} />
+
+      {/* Add Book Popup Modal */}
+      {showAddBook && (
+        <AddBook 
+          open={showAddBook}
+          onClose={() => setShowAddBook(false)}
+        />
+      )}
 
       {/* Page Layout */}
       <div className="flex">
