@@ -1,8 +1,12 @@
-import { Modal, message } from "antd";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import ConfirmModal from "../components/ConfirmModal";
+import { message } from "antd";
 
 function BookCard({ book }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleBorrowClick = () => {
     setIsModalVisible(true);
@@ -23,13 +27,14 @@ const handleConfirm = async () => {
   }
 };
 
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
-
   return (
-    <>
-      <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition p-4 border border-gray-200">
+    <> 
+      <div 
+      className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:shadow-xl cursor-pointer
+      transform transition-all duration-200 ease-in-out
+      hover:-translate-y-1
+      active:scale-[0.98]"
+      onClick={() => navigate(`/books/${book.bookId}`)}>
         
         {/* Book Image */}
         <div className="h-48 w-full overflow-hidden rounded-lg bg-gray-100">
@@ -61,23 +66,28 @@ const handleConfirm = async () => {
         {/* Borrow Button */}
         <button
           className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition"
-          onClick={handleBorrowClick}
+            onClick={(e) => {  
+                e.stopPropagation();
+                handleBorrowClick();
+            }}
         >
           Borrow Request
         </button>
       </div>
 
       {/* Ant Design Modal */}
-      <Modal
+      <ConfirmModal
         title="Confirm Borrow"
         open={isModalVisible}
-        onOk={handleConfirm}
-        onCancel={handleCancel}
-        okText="Confirm"
-        cancelText="Cancel"
-      >
-        <p>Are you sure you want to borrow <strong>{book.title}</strong>?</p>
-      </Modal>
+        description={
+          <p>
+            Are you sure you want to borrow{" "}
+            <strong>{book.title}</strong>?
+          </p>
+        }
+        onConfirm={handleConfirm}
+        onCancel={() => setIsModalVisible(false)}
+      />
     </>
   );
 }
