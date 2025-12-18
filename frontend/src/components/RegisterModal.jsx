@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
+import zxcvbn from 'zxcvbn';
+import AlertMessage from './AlertMessage'; // Import the AlertMessage component
 
-const locations = ['Colombo', 'Kandy', 'Galle', 'Jaffna', 'Negombo'];
+const locations = [
+    'Colombo', 'Gampaha', 'Kalutara', 'Kandy', 'Matale', 'Nuwara Eliya',
+    'Galle', 'Matara', 'Hambantota', 'Jaffna', 'Kilinochchi', 'Mannar',
+    'Vavuniya', 'Mullaitivu', 'Batticaloa', 'Ampara', 'Trincomalee',
+    'Kurunegala', 'Puttalam', 'Anuradhapura', 'Polonnaruwa', 'Badulla',
+    'Monaragala', 'Ratnapura', 'Kegalle'
+];
+
 
 const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
     const [form, setForm] = useState({
@@ -14,26 +23,103 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
         location: ''
     });
 
+    const [passwordStrength, setPasswordStrength] = useState(0);
+    const [passwordStrengthMessage, setPasswordStrengthMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+    const [alert, setAlert] = useState(null); // State to hold alert message
+
+
 
     const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setForm({ ...form, [name]: value });
+
+        if (name === 'password') {
+            const result = zxcvbn(value);
+            setPasswordStrength(result.score); // Password strength (0-4 scale)
+            setPasswordStrengthMessage(result.feedback.suggestions.join(' ')); // Suggestions
+        }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // After send `form` to backend using fetch or axios
-        alert('Registration submitted!');
+
+        if (form.password !== form.confirmPassword) {
+            setAlert({ message: 'Passwords do not match!', type: 'error' });
+            return;
+        }
+
+        if (passwordStrength < 3) {
+            setAlert({ message: 'Password is too weak. Please choose a stronger password.', type: 'error' });
+            return;
+        }
+
+        const payload = {
+            fullName: form.fullName,
+            username: form.username,
+            password: form.password,
+            contactNumber: form.contactNumber,
+            whatsappNumber: form.whatsappNumber,
+            email: form.email,
+            location: { locationName: form.location } // We pass the selected location directly
+        };
+
+        try {
+            const response = await fetch('http://localhost:8080/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+
+            const data = await response.text();
+            if (response.ok) {
+                setAlert({ message: data, type: 'success' });
+
+                setForm({
+                    fullName: '',
+                    username: '',
+                    password: '',
+                    confirmPassword: '',
+                    contactNumber: '',
+                    whatsappNumber: '',
+                    email: '',
+                    location: ''
+                });
+
+                onClose(); // Close the registration modal
+                onOpenLogin(); // Open the login modal
+            } else {
+                setAlert({ message: data, type: 'error' });
+            }
+        } catch (error) {
+            setAlert({ message: 'Error connecting to the server', type: 'error' });
+        }
     };
+    const handleCloseAlert = () => {
+        setAlert(null); // Reset alert state when closed
+    };
+
+
 
     if (!isOpen) return null;
+
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-20">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg relative">
+            <div className={`bg-white p-6 rounded-lg shadow-lg w-full max-w-lg relative ${form.password ? 'expanded' : ''}`}>
                 <h2 className="text-2xl font-bold text-center mb-4">Register</h2>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Display AlertMessage if alert is present */}
+                {alert && (
+                    <AlertMessage
+                        message={alert.message}
+                        type={alert.type}
+                        onClose={handleCloseAlert}
+                    />
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-3">
                     {/* Full Name */}
                     <div className="flex items-center space-x-4">
                         <label htmlFor="fullName" className="w-1/3 text-right font-medium">
@@ -125,6 +211,14 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
                             </button>
                         </div>
                     </div>
+                    {/* Password strength indicator */}
+                    {/* Only show password strength indicator if password is entered */}
+                    {form.password && (
+                        <div className="mt-4 ml-40">
+                            <progress value={passwordStrength} max={4} className="w-full h-2 bg-blue-200 rounded"></progress>
+                            <p className="text-sm text-gray-500 mt-1">{passwordStrengthMessage}</p>
+                        </div>
+                    )}
 
                     {/* Confirm Password */}
                     <div className="flex items-center space-x-4">
@@ -201,7 +295,10 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
                                     name="contactNumber"
                                     type="text"
                                     value={form.contactNumber}
-                                    onChange={handleChange}
+                                    onChange={(e) => {
+                                        const val = e.target.value.replace(/\D/, '');
+                                        setForm({ ...form, contactNumber: val.slice(0, 9) });
+                                    }}
                                     required
                                     className="flex-1 p-2 border border-l-0 rounded-r focus:outline-blue-500"
                                 />
@@ -225,7 +322,10 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
                                     name="whatsappNumber"
                                     type="text"
                                     value={form.whatsappNumber}
-                                    onChange={handleChange}
+                                    onChange={(e) => {
+                                        const val = e.target.value.replace(/\D/, '');
+                                        setForm({ ...form, whatsappNumber: val.slice(0, 9) });
+                                    }}
                                     required
                                     className="flex-1 p-2 border border-l-0 rounded-r focus:outline-blue-500"
                                 />
@@ -300,7 +400,7 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
                     ✖
                 </button>
             </div>
-        </div>
+        </div >
     );
 };
 
