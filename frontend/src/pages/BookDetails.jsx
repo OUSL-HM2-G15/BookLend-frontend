@@ -45,7 +45,7 @@ const handleConfirm = async () => {
     };
 
     fetchBook();
-  });
+  }, [id]);
 
   if (loading) {
     return (
