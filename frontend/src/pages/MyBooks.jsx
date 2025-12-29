@@ -69,6 +69,7 @@ const MyBooks = () => {
         <ul className="space-y-3">
           {books.map((book) => (
             <MyBookCard
+               key={book.id}
                book={book}
                onEdit={handleEdit}
                onToggleStatus={handleToggleStatus}
