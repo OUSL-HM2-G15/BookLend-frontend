@@ -16,8 +16,10 @@ export default function DashboardLayout({ user }) {
       {/* Add Book Popup Modal */}
       {showAddBook && (
         <AddBook 
+        // props to control modal visibility from parent
           open={showAddBook}
           onClose={() => setShowAddBook(false)}
+          onSuccess={() => setShowAddBook(false)}
         />
       )}
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Modal, message, Spin } from "antd";
 import { IKUpload } from "imagekitio-react";
+import { getToken } from "../utils/authToken";
 
 export default function AddBookModal({ open, onClose, onSuccess }) {
 
@@ -116,6 +117,9 @@ export default function AddBookModal({ open, onClose, onSuccess }) {
 
     // Send to backend
     await axios.post(`${API_URL}/books`, payload, {
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
     });
     
     message.success("Book added successfully!");
@@ -163,8 +167,8 @@ export default function AddBookModal({ open, onClose, onSuccess }) {
       width={900}
       centered
       maskClosable={false}
-      destroyOnClose={true}
-      bodyStyle={{ padding: "20px" }}
+      destroyOnHidden={true}
+      Style={{ padding: "20px" }}
       className="addbook-modal"
     >
         {/* FORM FIELDS */}
@@ -234,7 +238,7 @@ export default function AddBookModal({ open, onClose, onSuccess }) {
               >
                 <option value="">Select Category</option>
                 {categories.map((cat) => (
-                  <option value={cat.categoryId}>
+                  <option key={cat.categoryId} value={cat.categoryName}>
                     {cat.categoryName}
                   </option>
                 ))}
@@ -254,7 +258,7 @@ export default function AddBookModal({ open, onClose, onSuccess }) {
               >
                 <option value="">Select Location</option>
                 {locations.map((loc) => (
-                  <option value={loc.locationId}>
+                  <option key={loc.locationId} value={loc.locationName}>
                     {loc.locationName}
                   </option>
                 ))}
