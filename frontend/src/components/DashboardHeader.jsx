@@ -1,6 +1,6 @@
 import  { useState } from "react";
-//import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import ConfirmModal from "../components/ConfirmModal"; 
 
 // Flower Logo Component
 const FlowerLogo = () => (
@@ -14,15 +14,17 @@ const FlowerLogo = () => (
   </svg>
 );
 // for test logout right now
-const DashboardHeader = ({ user , onLogout }) => {
+const DashboardHeader = ({ user , onLogout, setShowAddBook }) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const navigate = useNavigate();
 
+  // Sign-out confirm handler  
   const handleConfirmLogout = () => {
     if (onLogout) onLogout(); // call parent logout handler
     setShowConfirm(false);
     navigate("/"); // redirect to sign-in or home
   };
+
   // const navigate = useNavigate();
 
   // 🔹 Handle logout
@@ -39,14 +41,14 @@ const DashboardHeader = ({ user , onLogout }) => {
   //   }
   // };
 
-  // 🔹 Navigation handlers
-  // const handleAddBook = () => navigate("/add-book");
+  //  Navigation handlers
   // const handleProfile = () => navigate("/profile");
 
   const userImage = user?.profilePic || "https://via.placeholder.com/40";
   const userName = user?.name || "Guest";
 
   return (
+    <>
     <header className="fixed top-0 left-0 w-full bg-white shadow-md z-50">
       <div className="w-full px-6">
         <div className="flex justify-between items-center h-16">
@@ -62,7 +64,7 @@ const DashboardHeader = ({ user , onLogout }) => {
           {/* Right Side: Buttons + Profile */}
           <div className="flex items-center space-x-4">
             <button
-              //onClick={handleAddBook}
+              onClick={() => setShowAddBook(true)}
               className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
             >
               + Add Book
@@ -86,29 +88,18 @@ const DashboardHeader = ({ user , onLogout }) => {
 
         </div>
       </div>
+      </header>
       {/* Logout Confirmation Modal */}
-      {showConfirm && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30">
-          <div className="bg-white p-6 rounded shadow-lg text-center">
-            <p className="text-gray-700 mb-4">Are you sure you want to log out?</p>
-            <div className="flex justify-center gap-3">
-              <button
-                onClick={handleConfirmLogout}
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-              >
-                Yes, Logout
-              </button>
-              <button
-                onClick={() => setShowConfirm(false)}
-                className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </header>
+       <ConfirmModal
+        open={showConfirm}
+        title="Confirm Logout"
+        description="Are you sure you want to log out?"
+        okText="Logout"
+        cancelText="Cancel"
+        onConfirm={handleConfirmLogout}
+        onCancel={() => setShowConfirm(false)}
+      />
+    </>
   );
 };
 

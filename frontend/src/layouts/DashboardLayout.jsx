@@ -1,21 +1,37 @@
 import React, { useState } from "react";
 import DashboardHeader from "../components/DashboardHeader";
-import Header from "../components/Header";
+//import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Sidebar from "../components/DashboardSideBar";
+import AddBook from "../components/AddBook";
+
 import { Outlet } from "react-router-dom";
 
-export default function DashboardLayout({ user, children }) {
+import LoginModal from "../components/LoginModal";
+
+export default function DashboardLayout({ user, onLogout  }) {
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showAddBook, setShowAddBook] = useState(false);
 
-  const handleLogout = () => setShowLoginModal(true);
+ // Called after logout confirmation
+  const handleLogout = () => {
+    if (onLogout) onLogout(); // clear auth/token
+    setShowLoginModal(true); // open login modal
+  };
+
+
   return (
-    <div className="flex flex-col min-h-scree0 bg-gray-50n">
-      {/* Dashboard Header */}
-      <DashboardHeader user={user} />
+    <div className="bg-white min-h-screen">
+      {/* Fixed Header */}
+      <DashboardHeader user={user} onLogout={handleLogout} setShowAddBook={setShowAddBook} />
 
-      {/* Public Header (if needed) */}
-      <Header onLogout={handleLogout} />
+      {/* Add Book Popup Modal */}
+      {showAddBook && (
+        <AddBook 
+          open={showAddBook}
+          onClose={() => setShowAddBook(false)}
+        />
+      )}
 
       {/* Page Layout */}
       <div className="flex flex-1">
@@ -24,19 +40,20 @@ export default function DashboardLayout({ user, children }) {
 
         {/* Main Content Area */}
         <main className="flex-1 ml-64 mt-16 p-6 overflow-y-auto">
-          {/* Nested routes or children */}
-          {children || <Outlet context={{ user }} />}
+          <Outlet context={{ user }} />
         </main>
       </div>
       {/* Footer */}
       <Footer />
 
       {/* Login Modal */}
-      {showLoginModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
-          {/* LoginModal component goes here */}
-        </div>
-      )}
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        onLoginSuccess={() => setShowLoginModal(false)}
+        onOpenRegister={() => {}}
+        onOpenForgot={() => {}}
+      />
     </div>
   );
 }

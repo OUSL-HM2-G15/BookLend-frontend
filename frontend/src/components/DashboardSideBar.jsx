@@ -3,24 +3,25 @@ import { NavLink } from "react-router-dom";
 
 const Sidebar = () => {
   const links = [
-    { name: "Explore", path: "/dashboard/explore" }, // not use file paths, need route paths
-    { name: "My Books", path: "/dashboard/my-books" },
-    { name: "My Borrowed Books", path: "/dashboard/borrowed-books" },
-    { name: "My Lended Books", path: "/dashboard/my-lended-books" },
-    { name: "Requests Received", path: "/dashboard/requests-received" },
-    { name: "Requests Posted", path: "/dashboard/requests-posted" },
+    { name: "Explore", path: "/explore" }, // not use file paths, need route paths
+    { name: "My Books", path: "/my-books" },
+    { name: "My Borrowed Books", path: "/borrowed-books" },
+    { name: "My Lended Books", path: "/my-lended-books" },
+    { name: "Requests Received", path: "/requests-received" },
+    { name: "Requests Posted", path: "/requests-posted" },
+
   ];
 
   return (
-    <aside className="fixed top-16 left-0 bottom-16 w-64 bg-white border-r p-4 overflow-auto">
-      <nav className="flex flex-col space-y-2">
+    <aside className="hidden md:flex fixed top-16 left-0 bottom-0 w-64 bg-white border-r p-4 overflow-auto z-40">
+      <nav className="flex flex-col space-y-8">
          {links.map((link) => (
           <NavLink
             key={link.path}
             to={link.path}
             end
             className={({ isActive }) =>
-              `block px-4 py-2 rounded-md text-gray-800 font-medium transition ${
+              `block px-4 py-4 rounded-md text-gray-800 font-medium transition ${
                 isActive 
                 ? "bg-blue-100 text-blue-600 font-semibold" 
                 : "hover:bg-gray-100"
