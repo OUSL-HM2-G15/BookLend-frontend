@@ -8,6 +8,8 @@ import MyBooks from "./MyBooks";
 // import MyLendedBooks from "./MyLendedBooks";
 // import RequestsReceived from "./RequestsReceived";
 // import RequestsPosted from "./RequestsPosted";
+import BookDetails from "./BookDetails";
+import MyBookDetails from "./MyBookDetails";
 
 export default function Dashboard() {
   // const [user, setUser] = useState(null); // store user data from backend
@@ -45,6 +47,13 @@ export default function Dashboard() {
             <Route path="my-lended-books" element={<MyLendedBooks user={user} />} />
             <Route path="requests-received" element={<RequestsReceived user={user} />} />
             <Route path="requests-posted" element={<RequestsPosted user={user} />} />  */}
+            
+              {/* Book detail - user view */}
+              <Route path="books/:id" element={<BookDetails />} />
+
+              {/* Book detail - owner view */}
+              <Route path="my-books/:id" element={<MyBookDetails />} />
+
             </Route>
            </Routes>
   );
