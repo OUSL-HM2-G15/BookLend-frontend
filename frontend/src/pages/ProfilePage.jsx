@@ -1,7 +1,7 @@
 import React from "react";
-import DashboardHeader from "../../components/DashboardHeader";
-import DashboardSideBar from "../../components/DashboardSideBar";
-import Footer from "../../components/Footer";
+import DashboardHeader from "../components/DashboardHeader";
+import DashboardSideBar from "../components/DashboardSideBar";
+import Footer from "../components/Footer";
 
 const ProfilePage = () => {
   return (

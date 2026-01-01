@@ -7,7 +7,7 @@ import BookDetails from "./pages/BookDetails";
 import DashboardHeader from "./components/DashboardHeader";
 import DashBoardSideBar from "./components/DashboardSideBar";
 import Footer from "./components/Footer";
-import ProfilePage from "./pages/Profile/ProfilePage";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
 
