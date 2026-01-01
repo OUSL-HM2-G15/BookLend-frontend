@@ -6,6 +6,7 @@ import axios from "axios";
 import { getToken } from "../utils/authToken";
 import { message } from "antd";
 import ConfirmModal from "../components/ConfirmModal";
+import { loadLocations, loadCategories } from "../services/lookupService";
 
 const MyBookDetailPage = () => {
   const { id } = useParams();
@@ -39,13 +40,9 @@ const MyBookDetailPage = () => {
           window.location.href = "/login";
         }
       });
-   try {
-    axios.get(`${API_URL}/locations`).then((res) => setLocations(res.data));
-    axios.get(`${API_URL}/categories`).then((res) => setCategories(res.data));
-   } catch (err) {
-    console.error("Error fetching dropdown data:", err);
-    message.error("Failed to load dropdown data.");
-   }
+      
+    loadLocations().then(setLocations);
+    loadCategories().then(setCategories);
   }, [id]);
 
   const handleChange = (e) => {
