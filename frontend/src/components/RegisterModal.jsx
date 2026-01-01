@@ -1,14 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import zxcvbn from 'zxcvbn';
 import AlertMessage from './AlertMessage'; // Import the AlertMessage component
-
-const locations = [
-    'Colombo', 'Gampaha', 'Kalutara', 'Kandy', 'Matale', 'Nuwara Eliya',
-    'Galle', 'Matara', 'Hambantota', 'Jaffna', 'Kilinochchi', 'Mannar',
-    'Vavuniya', 'Mullaitivu', 'Batticaloa', 'Ampara', 'Trincomalee',
-    'Kurunegala', 'Puttalam', 'Anuradhapura', 'Polonnaruwa', 'Badulla',
-    'Monaragala', 'Ratnapura', 'Kegalle'
-];
 
 
 const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
@@ -29,6 +21,65 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
     const [showConfirm, setShowConfirm] = useState(false);
     const [alert, setAlert] = useState(null); // State to hold alert message
 
+    const [locations, setLocations] = useState([]); // Fetched from backend
+
+    // ** Reset form when modal closes
+    useEffect(() => {
+        if (!isOpen) {
+            setForm({
+                fullName: '',
+                username: '',
+                password: '',
+                confirmPassword: '',
+                contactNumber: '',
+                whatsappNumber: '',
+                email: '',
+                location: ''
+            });
+            setPasswordStrength(0);
+            setPasswordStrengthMessage('');
+            setShowPassword(false);
+            setShowConfirm(false);
+            setAlert(null);
+        }
+    }, [isOpen]);
+
+    // Auto-close alerts after 4 seconds
+  useEffect(() => {
+    if (alert) {
+      const timer = setTimeout(() => setAlert(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [alert]);
+
+
+    // Fetch locations from backend on component mount
+    useEffect(() => {
+        const fetchLocations = async () => {
+            try {
+                const res = await fetch('http://localhost:8080/api/locations');
+
+                if (!res.ok) {
+                    console.error('Failed to fetch locations', res.status);
+                    setLocations([]);
+                    return;
+                }
+
+                const data = await res.json();
+
+                if (Array.isArray(data)) {
+                    setLocations(data);
+                } else {
+                    setLocations([]);
+                }
+            } catch (err) {
+                console.error(err);
+                setLocations([]);
+            }
+        };
+
+        fetchLocations();
+    }, []);
 
 
     const handleChange = (e) => {
@@ -41,6 +92,14 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
             setPasswordStrengthMessage(result.feedback.suggestions.join(' ')); // Suggestions
         }
     };
+
+    // ** helper function to validate Sri Lanka phone numbers**
+    const isValidSriLankaNumber = (number) => {
+        const digits = number.replace(/\D/g, '');
+        return (digits.length === 10 && digits.startsWith('0')) || digits.length === 9;
+    };
+
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -55,27 +114,44 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
             return;
         }
 
+        // ** Validate phone numbers before sending**
+        if (!isValidSriLankaNumber(form.contactNumber)) {
+            setAlert({ message: 'Invalid Contact Number. Must be 9 digits (without 0) or 10 digits starting with 0.', type: 'error' });
+            return;
+        }
+        if (!isValidSriLankaNumber(form.whatsappNumber)) {
+            setAlert({ message: 'Invalid WhatsApp Number. Must be 9 digits (without 0) or 10 digits starting with 0.', type: 'error' });
+            return;
+        }
+
+        // ** Format numbers to +94XXXXXXXXX**
+        const contactFormatted = '+94' + (form.contactNumber.startsWith('0') ? form.contactNumber.slice(1) : form.contactNumber);
+        const whatsappFormatted = '+94' + (form.whatsappNumber.startsWith('0') ? form.whatsappNumber.slice(1) : form.whatsappNumber);
+
         const payload = {
             fullName: form.fullName,
             username: form.username,
             password: form.password,
-            contactNumber: form.contactNumber,
-            whatsappNumber: form.whatsappNumber,
+            confirmPassword: form.confirmPassword,
+            contactNumber: contactFormatted,
+            whatsappNumber: whatsappFormatted,
             email: form.email,
-            location: { locationName: form.location } // We pass the selected location directly
+            location: form.location // send just the name string 
         };
 
         try {
-            const response = await fetch('http://localhost:8080/api/auth/register', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
             });
 
-            const data = await response.text();
-            if (response.ok) {
-                setAlert({ message: data, type: 'success' });
+            const data = await response.json();
 
+            if (response.ok) {
+                setAlert({ message: data.message || "Registered successfully", type: 'success' });
+
+                // Reset form
                 setForm({
                     fullName: '',
                     username: '',
@@ -86,21 +162,19 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
                     email: '',
                     location: ''
                 });
-
-                onClose(); // Close the registration modal
-                onOpenLogin(); // Open the login modal
+                // Delay before switching to login modal
+                setTimeout(() => {
+                    onClose();
+                    onOpenLogin();
+                }, 1500);
             } else {
-                setAlert({ message: data, type: 'error' });
+                // Display backend error
+                setAlert({ message: data.message || 'Registration failed', type: 'error' });
             }
         } catch (error) {
             setAlert({ message: 'Error connecting to the server', type: 'error' });
         }
     };
-    const handleCloseAlert = () => {
-        setAlert(null); // Reset alert state when closed
-    };
-
-
 
     if (!isOpen) return null;
 
@@ -115,7 +189,7 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
                     <AlertMessage
                         message={alert.message}
                         type={alert.type}
-                        onClose={handleCloseAlert}
+                        onClose={() => setAlert(null)}
                     />
                 )}
 
@@ -214,11 +288,24 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
                     {/* Password strength indicator */}
                     {/* Only show password strength indicator if password is entered */}
                     {form.password && (
-                        <div className="mt-4 ml-40">
-                            <progress value={passwordStrength} max={4} className="w-full h-2 bg-blue-200 rounded"></progress>
-                            <p className="text-sm text-gray-500 mt-1">{passwordStrengthMessage}</p>
+                        <div className="mt-4 ml-flex">
+                            <progress
+                                value={passwordStrength}
+                                max={4}
+                                className="w-full h-2 bg-blue-200 rounded"
+                            ></progress>
+                            <p
+                                className={`text-sm mt-1 ${passwordStrength <= 1 ? "text-red-500" : // very weak
+                                    passwordStrength === 2 ? "text-yellow-500" : // weak
+                                        passwordStrength === 3 ? "text-blue-500" : // good
+                                            "text-green-500" // strong
+                                    }`}
+                            >
+                                {passwordStrengthMessage || (passwordStrength >= 3 ? "Strong password" : "Weak password")}
+                            </p>
                         </div>
                     )}
+
 
                     {/* Confirm Password */}
                     <div className="flex items-center space-x-4">
@@ -234,7 +321,7 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
                                 onChange={handleChange}
                                 required
                                 className="w-full p-2 border rounded pr-10"
-                                autoComplete="new-password"
+                                autoComplete="off"
                             />
                             <button
                                 type="button"
@@ -280,58 +367,28 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
                         </div>
                     </div>
 
-                    {/* Contact Number */}
-                    <div className="flex items-center space-x-4">
-                        <label htmlFor="contactNumber" className="w-1/3 text-right font-medium">
-                            Contact Number:
-                        </label>
-                        <div className="w-2/3 flex">
-                            <div className="flex w-full">
-                                <span className="flex items-center px-3 bg-gray-100 border border-r-0 rounded-l text-gray-700">
-                                    +94
-                                </span>
+                    {/* Contact & WhatsApp */}
+                    {['contactNumber', 'whatsappNumber'].map((field) => (
+                        <div key={field} className="flex items-center space-x-4">
+                            <label htmlFor={field} className="w-1/3 text-right font-medium">{field === 'contactNumber' ? 'Contact Number:' : 'WhatsApp Number:'}</label>
+                            <div className="w-2/3 flex">
+                                <span className="flex items-center px-3 bg-gray-100 border border-r-0 rounded-l text-gray-700">+94</span>
                                 <input
-                                    id="contactNumber"
-                                    name="contactNumber"
+                                    id={field}
+                                    name={field}
                                     type="text"
-                                    value={form.contactNumber}
+                                    value={form[field]}
                                     onChange={(e) => {
-                                        const val = e.target.value.replace(/\D/, '');
-                                        setForm({ ...form, contactNumber: val.slice(0, 9) });
+                                        const val = e.target.value.replace(/\D/g, '');
+                                        setForm({ ...form, [field]: val.slice(0, 10) });
                                     }}
                                     required
                                     className="flex-1 p-2 border border-l-0 rounded-r focus:outline-blue-500"
                                 />
                             </div>
                         </div>
-                    </div>
+                    ))}
 
-                    {/* WhatsApp Number */}
-                    <div className="flex items-center space-x-4">
-                        <label htmlFor="whatsappNumber" className="w-1/3 text-right font-medium">
-                            WhatsApp Number:
-                        </label>
-                        <div className="w-2/3 flex">
-                            <div className="flex w-full">
-
-                                <span className="flex items-center px-3 bg-gray-100 border border-r-0 rounded-l text-gray-700">
-                                    +94
-                                </span>
-                                <input
-                                    id="whatsappNumber"
-                                    name="whatsappNumber"
-                                    type="text"
-                                    value={form.whatsappNumber}
-                                    onChange={(e) => {
-                                        const val = e.target.value.replace(/\D/, '');
-                                        setForm({ ...form, whatsappNumber: val.slice(0, 9) });
-                                    }}
-                                    required
-                                    className="flex-1 p-2 border border-l-0 rounded-r focus:outline-blue-500"
-                                />
-                            </div>
-                        </div>
-                    </div>
 
                     {/* Email */}
                     <div className="flex items-center space-x-4">
@@ -363,11 +420,12 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
                             className="w-2/3 p-2 border rounded"
                         >
                             <option value="">Select Location</option>
-                            {locations.map((loc) => (
-                                <option key={loc} value={loc}>
-                                    {loc}
-                                </option>
-                            ))}
+                            {Array.isArray(locations) &&
+                                locations.map((loc) => (
+                                    <option key={loc.locationId} value={loc.locationName}>
+                                        {loc.locationName}
+                                    </option>
+                                ))}
                         </select>
                     </div>
 

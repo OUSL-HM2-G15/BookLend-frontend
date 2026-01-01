@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AlertMessage from './AlertMessage';
 import ForgotPasswordModal from './ForgotPasswordModel';
 import ResetPasswordModal from './ResetPasswordModal';
@@ -8,7 +9,8 @@ const LoginModal = ({ isOpen, onClose, onOpenRegister, onLoginSuccess, onOpenFor
     const [password, setPassword] = useState('');
     const [alert, setAlert] = useState(null);
     const [loading, setLoading] = useState(false);
-    
+    const navigate = useNavigate();
+
 
     // Password visible toggle
     const [showPassword, setShowPassword] = useState(false);
@@ -34,25 +36,44 @@ const LoginModal = ({ isOpen, onClose, onOpenRegister, onLoginSuccess, onOpenFor
         setLoading(true);
         try {
 
-            const res = await fetch('http://localhost:8080/api/auth/login', {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                 // Send JSON body instead of query params
                 body: JSON.stringify({ username, password })
             });
 
-            const data = await res.json();
+            // Handle JSON or plain text responses
+            let data;
+            const contentType = res.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                data = await res.json();
+            } else {
+                data = { message: await res.text() };
+            }
+
 
             if (res.ok) {
                 localStorage.setItem('token', data.token); // Save JWT token
                 setAlert({ message: 'Login successful!', type: 'success' });
+
+                // ** Fetch user profile (optional, comment for now)
+                // const userRes = await fetch(`${process.env.REACT_APP_API_URL}/api/users/me`, {
+                //     headers: { 'Authorization': `Bearer ${data.token}` }
+                // });
+                // const userData = await userRes.json();
+                // onLoginSuccess(userData);
+
                 setTimeout(() => {
                     onClose();
-                    onLoginSuccess(); // Pass user info to parent
+                    onLoginSuccess(); // You can pass user data later
+                    navigate('/explore'); // Redirect to Explore page after login
                 }, 500);
+            } else if (res.status === 401) {
+                setAlert({ message: data.message || 'Invalid username or password', type: 'error' });
             } else {
-                 setAlert({ message: data.message || 'Invalid credentials', type: 'error' });
+                setAlert({ message: data.message || 'Something went wrong', type: 'error' });
             }
+
         } catch (error) {
             console.error(error);
             setAlert({ message: 'Error connecting to server.', type: 'error' });
@@ -61,7 +82,7 @@ const LoginModal = ({ isOpen, onClose, onOpenRegister, onLoginSuccess, onOpenFor
         }
     };
 
-     const handleForgotPassword = () => {
+    const handleForgotPassword = () => {
         onClose();
         setIsForgotOpen(true);
         onOpenForgot();
@@ -90,7 +111,7 @@ const LoginModal = ({ isOpen, onClose, onOpenRegister, onLoginSuccess, onOpenFor
                 <h2 className="text-2xl font-bold text-center mb-4"
                     style={{ animation: 'scaleIn 0.3s ease forwards' }}>Log In</h2>
 
-                 {alert && <AlertMessage message={alert.message} type={alert.type} onClose={() => setAlert(null)} />}
+                {alert && <AlertMessage message={alert.message} type={alert.type} onClose={() => setAlert(null)} />}
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="mb-4">
@@ -176,8 +197,8 @@ const LoginModal = ({ isOpen, onClose, onOpenRegister, onLoginSuccess, onOpenFor
                     <p
                         className="mt-2 text-right text-sm text-indigo-600 cursor-pointer hover:underline"
                         onClick=
-                            {handleForgotPassword}
-                            
+                        {handleForgotPassword}
+
                     >
                         Forgot Password?
                     </p>

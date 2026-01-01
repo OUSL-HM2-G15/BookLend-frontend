@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect  } from "react";
 import Dashboard from "./pages/Dashboard";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { IKContext } from "imagekitio-react"; // to access imagekit.io globally
@@ -10,12 +10,35 @@ function App() {
 
   const API_URL = process.env.REACT_APP_API_URL;
 
+  // Check token on app load
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      // Optionally fetch profile here
+      setUser({}); // minimal user object for logged-in state
+    }
+  }, []);
+
    // Global logout function
-  const handleLogout = () => {
-    localStorage.removeItem("token"); // clear JWT
-    setUser(null); // clear user state
-    // Optionally navigate to home or login
-    window.location.href = "/";
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (token) {
+        await fetch(`${API_URL}/api/auth/logout`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      }
+    } catch (err) {
+      console.error("Logout error:", err);
+    } finally {
+      localStorage.removeItem("token");
+      setUser(null);
+      window.location.href = "/"; // redirect to Home after logout
+    }
   };
 
 
@@ -46,7 +69,8 @@ function App() {
         <Route path="/books/:id" element={<BookDetails />} />
 
         {/* Dashboard (all nested paths handled inside Dashboard.jsx) */}
-        <Route path="/*" element={<Dashboard user={user} onLogout={handleLogout} />} />
+        <Route path="/*" 
+        element={<Dashboard user={user} onLogout={handleLogout} />} />
 
         {/* Catch-all for invalid paths */}
         <Route path="*" element={<div>Page not found</div>} />

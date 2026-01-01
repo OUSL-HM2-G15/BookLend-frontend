@@ -5,19 +5,19 @@ import MyBooks from "./MyBooks";
 import BorrowedBooks from "./BorrowedBooks";
 import RequestPosted from "./RequestPosted";
 
-export default function Dashboard ({ user }) {
+export default function Dashboard({ user, onLogout }) {
   return (
-          <Routes>
-            <Route element={<DashboardLayout user={user} />}>
-            <Route index element={<Navigate to="explore" replace/>} /> {/* default page */}
-            <Route path="explore" element={<Explore />} />
-            <Route path="my-books" element={<MyBooks />} />
-            <Route path="borrowed-books" element={<BorrowedBooks />} />
-            <Route path="lended-books" element={<div>Lended Books </div>} />
-            <Route path="requests-received" element={<div>Requests Received </div>} />
-            <Route path="requests-posted" element={<RequestPosted />} />
-          </Route>
-          </Routes>
+    <Routes>
+      <Route element={<DashboardLayout user={user} onLogout={onLogout} />}>
+        <Route index element={<Navigate to="explore" replace />} /> {/* default page */}
+        <Route path="explore" element={<Explore />} />
+        <Route path="my-books" element={<MyBooks />} />
+        <Route path="borrowed-books" element={<BorrowedBooks />} />
+        <Route path="lended-books" element={<div>Lended Books </div>} />
+        <Route path="requests-received" element={<div>Requests Received </div>} />
+        <Route path="requests-posted" element={<RequestPosted />} />
+      </Route>
+    </Routes>
 
   );
 }

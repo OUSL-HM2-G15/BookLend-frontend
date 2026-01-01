@@ -4,19 +4,18 @@ import DashboardHeader from "../components/DashboardHeader";
 import Footer from "../components/Footer";
 import Sidebar from "../components/DashboardSideBar";
 import AddBook from "../components/AddBook";
-
 import { Outlet } from "react-router-dom";
 
 import LoginModal from "../components/LoginModal";
 
 export default function DashboardLayout({ user, onLogout  }) {
-  const [showLoginModal, setShowLoginModal] = useState(false);
   const [showAddBook, setShowAddBook] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
- // Called after logout confirmation
+  // Called after logout confirmation
   const handleLogout = () => {
-    if (onLogout) onLogout(); // clear auth/token
-    setShowLoginModal(true); // open login modal
+    if (onLogout) onLogout();   // call global App logout
+    setShowLoginModal(true);    // Optional: open login modal
   };
 
 
@@ -46,8 +45,7 @@ export default function DashboardLayout({ user, onLogout  }) {
       {/* Footer */}
       <Footer />
 
-      {/* Login Modal */}
-      <LoginModal
+    <LoginModal
         isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}
         onLoginSuccess={() => setShowLoginModal(false)}
