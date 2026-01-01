@@ -4,6 +4,10 @@ import Dashboard from "./pages/Dashboard";
 import { Routes, Route, BrowserRouter} from "react-router-dom";
 import Home from "./pages/Home";
 import BookDetails from "./pages/BookDetails";
+import DashboardHeader from "./components/DashboardHeader";
+import DashBoardSideBar from "./components/DashboardSideBar";
+import Footer from "./components/Footer";
+import ProfilePage from "./pages/Profile/ProfilePage";
 
 function App() {
 
@@ -31,6 +35,14 @@ function App() {
 
         {/* Dashboard route */}
         <Route path="/*" element={<Dashboard />} />
+
+        <Route path="profile" element={<ProfilePage />} />
+
+        <Route path="/*" element={<DashBoardSideBar />} />
+
+        <Route path="/*" element={<DashboardHeader />} />
+
+        <Route path="/*" element={<Footer />} />
 
         <Route path="/books/:id" element={<BookDetails />} />
 
