@@ -1,6 +1,10 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
-const MyBookCard = ({ book, onEdit, onToggleStatus }) => {
+const MyBookCard = ({ book, onToggleStatus }) => {
+
+  const navigate = useNavigate();
+
   const {
     title,
     author,
@@ -11,10 +15,16 @@ const MyBookCard = ({ book, onEdit, onToggleStatus }) => {
     imageUrl,
   } = book;
 
+  const handleCardClick = () => {
+    navigate(`/my-books/${book.id}`);
+  };
+
   const isAvailable = status === "Available";
 
   return (
-    <div className="flex gap-5 p-5 border rounded-xl bg-white shadow-sm hover:shadow-lg transition duration-300">
+    <div 
+    onClick={handleCardClick}
+    className="cursor-pointer flex gap-5 p-5 border rounded-xl bg-white shadow-sm hover:shadow-lg transition duration-300">
       
       {/* Left: Book Image */}
       <div className="w-40 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 h-60">
@@ -63,23 +73,22 @@ const MyBookCard = ({ book, onEdit, onToggleStatus }) => {
 
         {/* Action Buttons */}
         <div className="flex gap-3 mt-5">
-          <button
-            onClick={() => onEdit(book)}
-            className="px-5 py-2 text-sm rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
-          >
-            Edit
-          </button>
-
           {isAvailable ? (
             <button
-              onClick={() => onToggleStatus(book.id, "Unavailable")}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleStatus(book.id, "Unavailable")
+              }}
               className="cursor-pointer px-5 py-2 text-sm rounded-lg min-w-[140px] bg-red-500 text-white hover:bg-red-700 transition"
             >
               Mark Unavailable
             </button>
           ) : (
             <button
-              onClick={() => onToggleStatus(book.id, "Available")}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleStatus(book.id, "Available")
+              }}
               className="cursor-pointer px-5 py-2 text-sm rounded-lg min-w-[140px] bg-green-500 text-white hover:bg-green-700 transition"
             >
               Mark Available
