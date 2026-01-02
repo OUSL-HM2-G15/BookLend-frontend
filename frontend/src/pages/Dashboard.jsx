@@ -4,6 +4,11 @@ import Explore from "./Explore";
 import MyBooks from "./MyBooks";
 import BorrowedBooks from "./BorrowedBooks";
 import RequestPosted from "./RequestPosted";
+// import MyLendedBooks from "./MyLendedBooks";
+// import RequestsReceived from "./RequestsReceived";
+// import RequestsPosted from "./RequestsPosted";
+import BookDetails from "./BookDetails";
+import MyBookDetails from "./MyBookDetails";
 
 export default function Dashboard({ user, onLogout }) {
   return (
@@ -16,8 +21,15 @@ export default function Dashboard({ user, onLogout }) {
         <Route path="lended-books" element={<div>Lended Books </div>} />
         <Route path="requests-received" element={<div>Requests Received </div>} />
         <Route path="requests-posted" element={<RequestPosted />} />
+
+
+        {/* Book detail - user view */}
+        <Route path="books/:id" element={<BookDetails />} />
+
+        {/* Book detail - owner view */}
+        <Route path="my-books/:id" element={<MyBookDetails />} />
+
       </Route>
     </Routes>
-
   );
 }

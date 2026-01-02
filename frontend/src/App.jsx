@@ -3,7 +3,6 @@ import Dashboard from "./pages/Dashboard";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { IKContext } from "imagekitio-react"; // to access imagekit.io globally
 import Home from "./pages/Home";
-import BookDetails from "./pages/BookDetails";
 
 function App() {
   const [user, setUser] = useState(null); // store logged-in user
@@ -24,7 +23,7 @@ function App() {
     try {
       const token = localStorage.getItem("token");
       if (token) {
-        await fetch(`${API_URL}/api/auth/logout`, {
+        await fetch(`${API_URL}/auth/logout`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -65,8 +64,6 @@ function App() {
         {/* SAME Home, different URLs */}
         <Route path="/login" element={<Home />} />
         <Route path="/register" element={<Home />} />
-
-        <Route path="/books/:id" element={<BookDetails />} />
 
         {/* Dashboard (all nested paths handled inside Dashboard.jsx) */}
         <Route path="/*" 

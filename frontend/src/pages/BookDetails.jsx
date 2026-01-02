@@ -1,6 +1,7 @@
+// This is the BookDetails.jsx file for users to view book details and send borrow requests.
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import DashboardHeader from "../components/DashboardHeader";
 import { useParams, Link } from "react-router-dom";
 import ConfirmModal from "../components/ConfirmModal";
 import { message, Tooltip } from "antd";
@@ -71,9 +72,8 @@ const handleConfirm = async () => {
 
   return (
     <div>
-      <DashboardHeader />
       {/* Page offset for fixed header */}
-      <main className="pt-20">
+      <main>
       {/* Main container */}
       <div className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-2 gap-10">
 
