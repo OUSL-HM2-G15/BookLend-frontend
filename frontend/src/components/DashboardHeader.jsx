@@ -23,17 +23,21 @@ const DashboardHeader = ({ user, onLogout, setShowAddBook }) => {
   // const handleProfile = () => navigate("/profile");
 
   const handleLogout = async () => {
-    setLoading(true); // start loader
-    try {
-      if (onLogout) {
-        await onLogout(); // wait for App logout
-      }
-      setShowConfirm(false);
-      navigate("/"); // redirect after logout
-    } finally {
-      setLoading(false);
+  setLoading(true); // show "Logging out..." 
+
+  try {
+    await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay
+
+    if (onLogout) {
+      await onLogout(); // wait for app logout
     }
-  };
+
+    setShowConfirm(false);
+    navigate("/"); // redirect after logout
+  } finally {
+    setLoading(false);
+  }
+};
 
   const userImage = user?.profilePic || "https://via.placeholder.com/40";
   const userName = user?.name || "Guest";
