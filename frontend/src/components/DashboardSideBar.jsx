@@ -13,15 +13,15 @@ const Sidebar = () => {
   ];
 
   return (
-    <aside className="hidden md:flex fixed top-16 left-0 bottom-0 w-64 bg-white border-r p-4 overflow-auto z-40">
-      <nav className="flex flex-col space-y-8">
+     <aside className="fixed top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-white border-r border-gray-300 p-4">
+      <nav className="flex flex-col space-y-2">
          {links.map((link) => (
           <NavLink
             key={link.path}
             to={link.path}
             end
             className={({ isActive }) =>
-              `block px-4 py-4 rounded-md text-gray-800 font-medium transition ${
+              `block px-4 py-2 rounded-md text-gray-800 font-medium transition ${
                 isActive 
                 ? "bg-blue-100 text-blue-600 font-semibold" 
                 : "hover:bg-gray-100"
