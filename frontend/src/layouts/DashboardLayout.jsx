@@ -2,27 +2,33 @@ import React, { useState } from "react";
 import DashboardHeader from "../components/DashboardHeader";
 import Sidebar from "../components/DashboardSideBar";
 import AddBook from "../components/AddBook";
-import { useLocation } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
+import LoginModal from "../components/LoginModal";
 
-import { Outlet } from "react-router-dom";
+export default function DashboardLayout({ user, onLogout }) {
+  const [showAddBook, setShowAddBook] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const location = useLocation();
 
-export default function DashboardLayout({ user }) {
-    const [showAddBook, setShowAddBook] = useState(false);
-    const location = useLocation();
-
-    const shouldHideSidebar =
+  // Called after logout confirmation
+  const handleLogout = () => {
+    if (onLogout) onLogout();   // call global App logout
+    setShowLoginModal(true);    // Optional: open login modal
+  };
+  // Hide sidebar on book detail pages
+  const shouldHideSidebar =
     location.pathname.startsWith("/books/") ||
     location.pathname.startsWith("/my-books/");
-    
+
   return (
     <div className="bg-white min-h-screen">
       {/* Fixed Header */}
-      <DashboardHeader user={user} setShowAddBook={setShowAddBook} />
+      <DashboardHeader user={user} onLogout={handleLogout} setShowAddBook={setShowAddBook} />
 
       {/* Add Book Popup Modal */}
       {showAddBook && (
-        <AddBook 
-        // props to control modal visibility from parent
+        <AddBook
+          // props to control modal visibility from parent
           open={showAddBook}
           onClose={() => setShowAddBook(false)}
           onSuccess={() => setShowAddBook(false)}
@@ -35,15 +41,24 @@ export default function DashboardLayout({ user }) {
         {!shouldHideSidebar && <Sidebar />}
 
         {/* Main Content Area */}
-        <main 
+
+        <main
           className={`flex-1 mt-16 p-6 h-[calc(100vh-4rem)] overflow-y-auto
             ${shouldHideSidebar ? "ml-0" : "ml-64"}
           `}
-          >
-          <Outlet context={{ user }} /> 
+        >
+          <Outlet context={{ user }} />
           {/* Pass user down to child routes via Outlet context */}
         </main>
       </div>
+
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        onLoginSuccess={() => setShowLoginModal(false)}
+        onOpenRegister={() => { }}
+        onOpenForgot={() => { }}
+      />
     </div>
   );
 }

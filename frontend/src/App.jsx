@@ -1,12 +1,45 @@
-import { IKContext } from "imagekitio-react"; // to access imagekit.io globally
-
+import { useState, useEffect  } from "react";
 import Dashboard from "./pages/Dashboard";
-import { Routes, Route, BrowserRouter} from "react-router-dom";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { IKContext } from "imagekitio-react"; // to access imagekit.io globally
 import Home from "./pages/Home";
 
 function App() {
+  const [user, setUser] = useState(null); // store logged-in user
 
   const API_URL = process.env.REACT_APP_API_URL;
+
+  // Check token on app load
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      // Optionally fetch profile here
+      setUser({}); // minimal user object for logged-in state
+    }
+  }, []);
+
+   // Global logout function
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (token) {
+        await fetch(`${API_URL}/auth/logout`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      }
+    } catch (err) {
+      console.error("Logout error:", err);
+    } finally {
+      localStorage.removeItem("token");
+      setUser(null);
+      window.location.href = "/"; // redirect to Home after logout
+    }
+  };
+
 
   return (
     <IKContext
@@ -28,18 +61,20 @@ function App() {
         {/* Default route → Home page */}
         <Route path="/" element={<Home />} />
 
-        {/* Dashboard route */}
-        <Route path="/*" element={<Dashboard />} />
+        {/* SAME Home, different URLs */}
+        <Route path="/login" element={<Home />} />
+        <Route path="/register" element={<Home />} />
+
+        {/* Dashboard (all nested paths handled inside Dashboard.jsx) */}
+        <Route path="/*" 
+        element={<Dashboard user={user} onLogout={handleLogout} />} />
 
         {/* Catch-all for invalid paths */}
         <Route path="*" element={<div>Page not found</div>} />
       </Routes>
     </BrowserRouter>
     </IKContext>
-  )
+  );
 }
 
 export default App;
-
-// notes:
-// - If you later add top-level routes (like /login), just add more <Route> entries.

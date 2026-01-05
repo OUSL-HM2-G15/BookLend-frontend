@@ -1,22 +1,31 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AlertMessage from './AlertMessage';
+import ForgotPasswordModal from './ForgotPasswordModel';
+import ResetPasswordModal from './ResetPasswordModal';
 
-
-const LoginModal = ({ isOpen, onClose, onOpenRegister }) => {
+const LoginModal = ({ isOpen, onClose, onOpenRegister, onLoginSuccess, onOpenForgot }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [msg, setMsg] = useState('');
+    const [alert, setAlert] = useState(null);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
 
     // Password visible toggle
     const [showPassword, setShowPassword] = useState(false);
+
+    // For managing Forgot Password modal
+    const [isForgotOpen, setIsForgotOpen] = useState(false);
+    const [isResetOpen, setIsResetOpen] = useState(false);
+    const [resetToken, setResetToken] = useState(''); // To pass token to ResetPasswordModal
 
     // When modal closes, clear data (for safety)
     useEffect(() => {
         if (!isOpen) {
             setUsername('');
             setPassword('');
-            setMsg('');
+            setAlert(null);
             setShowPassword(false);
         }
     }, [isOpen]);
@@ -24,27 +33,66 @@ const LoginModal = ({ isOpen, onClose, onOpenRegister }) => {
     // It Handles the login form submit
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setMsg('');
         setLoading(true);
         try {
 
-            // Simulate API call delay here
-            await new Promise((r) => setTimeout(r, 1000));
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
 
-            // Simulated success login, replace with real fetch in production
-            if (username === "testuser" && password === "123456") {
-                setMsg(' Login successful!');
-                // Can save logged user here later
-                onClose();
+            // Handle JSON or plain text responses
+            let data;
+            const contentType = res.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                data = await res.json();
             } else {
-                setMsg(' Invalid credentials');
+                data = { message: await res.text() };
             }
+
+
+            if (res.ok) {
+                localStorage.setItem('token', data.token); // Save JWT token
+                setAlert({ message: 'Login successful!', type: 'success' });
+
+                // ** Fetch user profile (optional, comment for now)
+                // const userRes = await fetch(`${process.env.REACT_APP_API_URL}/api/users/me`, {
+                //     headers: { 'Authorization': `Bearer ${data.token}` }
+                // });
+                // const userData = await userRes.json();
+                // onLoginSuccess(userData);
+
+                setTimeout(() => {
+                    onClose();
+                    onLoginSuccess(); // You can pass user data later
+                    navigate('/explore'); // Redirect to Explore page after login
+                }, 500);
+            } else if (res.status === 401) {
+                setAlert({ message: data.message || 'Invalid username or password', type: 'error' });
+            } else {
+                setAlert({ message: data.message || 'Something went wrong', type: 'error' });
+            }
+
         } catch (error) {
-            setMsg(' Error connecting to server.');
+            console.error(error);
+            setAlert({ message: 'Error connecting to server.', type: 'error' });
         } finally {
             setLoading(false);
         }
     };
+
+    const handleForgotPassword = () => {
+        onClose();
+        setIsForgotOpen(true);
+        onOpenForgot();
+    };
+
+    const handleResetPassword = (tokenOrEmail) => {
+        setResetToken(tokenOrEmail); // Pass token or email to reset password modal
+        setIsResetOpen(true);
+    };
+
 
     // If modal is closed, return nothing
     if (!isOpen) return null;
@@ -63,7 +111,7 @@ const LoginModal = ({ isOpen, onClose, onOpenRegister }) => {
                 <h2 className="text-2xl font-bold text-center mb-4"
                     style={{ animation: 'scaleIn 0.3s ease forwards' }}>Log In</h2>
 
-                {msg && <p className="text-center text-sm mb-4 text-red-600">{msg}</p>}
+                {alert && <AlertMessage message={alert.message} type={alert.type} onClose={() => setAlert(null)} />}
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="mb-4">
@@ -144,6 +192,16 @@ const LoginModal = ({ isOpen, onClose, onOpenRegister }) => {
                     >
                         {loading ? 'Signing in...' : 'Log In'}
                     </button>
+
+                    {/* Forgot Password link */}
+                    <p
+                        className="mt-2 text-right text-sm text-indigo-600 cursor-pointer hover:underline"
+                        onClick=
+                        {handleForgotPassword}
+
+                    >
+                        Forgot Password?
+                    </p>
                 </form>
 
                 <button
@@ -170,6 +228,20 @@ const LoginModal = ({ isOpen, onClose, onOpenRegister }) => {
 
             </div>
 
+            {/* Forgot Password Modal */}
+            <ForgotPasswordModal
+                isOpen={isForgotOpen}
+                onClose={() => setIsForgotOpen(false)}
+                onOpenReset={handleResetPassword} // Pass token to reset password modal
+            />
+
+            {/* Reset Password Modal */}
+            <ResetPasswordModal
+                isOpen={isResetOpen}
+                onClose={() => setIsResetOpen(false)}
+                token={resetToken} // Pass the reset token or email
+            />
+
             {/* ANIMATION */}
             <style>{`
                     @keyframes scaleIn {
@@ -186,6 +258,7 @@ const LoginModal = ({ isOpen, onClose, onOpenRegister }) => {
         </div>
     );
 };
+
 
 
 export default LoginModal;
