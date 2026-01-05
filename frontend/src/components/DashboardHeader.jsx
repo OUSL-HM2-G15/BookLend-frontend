@@ -73,6 +73,7 @@ const DashboardHeader = ({ user, onLogout, setShowAddBook }) => {
                 src={userImage}
                 alt={userName}
                 className="w-10 h-10 rounded-full cursor-pointer border border-gray-300"
+                 //onClick={handleProfile}
               />
             </div>
           </div>

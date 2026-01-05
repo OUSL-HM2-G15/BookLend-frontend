@@ -12,7 +12,7 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
         contactNumber: '',
         whatsappNumber: '',
         email: '',
-        location: ''
+        location: '' // Will store locationId now (number as string)
     });
 
     const [passwordStrength, setPasswordStrength] = useState(0);
@@ -45,19 +45,19 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
     }, [isOpen]);
 
     // Auto-close alerts after 4 seconds
-  useEffect(() => {
-    if (alert) {
-      const timer = setTimeout(() => setAlert(null), 4000);
-      return () => clearTimeout(timer);
-    }
-  }, [alert]);
+    useEffect(() => {
+        if (alert) {
+            const timer = setTimeout(() => setAlert(null), 4000);
+            return () => clearTimeout(timer);
+        }
+    }, [alert]);
 
 
     // Fetch locations from backend on component mount
     useEffect(() => {
         const fetchLocations = async () => {
             try {
-                const res = await fetch('http://localhost:8080/api/locations');
+                const res = await fetch(`${process.env.REACT_APP_API_URL}/locations`);
 
                 if (!res.ok) {
                     console.error('Failed to fetch locations', res.status);
@@ -66,12 +66,7 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
                 }
 
                 const data = await res.json();
-
-                if (Array.isArray(data)) {
-                    setLocations(data);
-                } else {
-                    setLocations([]);
-                }
+                setLocations(Array.isArray(data) ? data : []);
             } catch (err) {
                 console.error(err);
                 setLocations([]);
@@ -128,6 +123,8 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
         const contactFormatted = '+94' + (form.contactNumber.startsWith('0') ? form.contactNumber.slice(1) : form.contactNumber);
         const whatsappFormatted = '+94' + (form.whatsappNumber.startsWith('0') ? form.whatsappNumber.slice(1) : form.whatsappNumber);
 
+        // Payload send locationId instead of name
+        // Backend will fetch locationName
         const payload = {
             fullName: form.fullName,
             username: form.username,
@@ -136,7 +133,7 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
             contactNumber: contactFormatted,
             whatsappNumber: whatsappFormatted,
             email: form.email,
-            location: form.location // send just the name string 
+            locationId: Number(form.location) // send ID
         };
 
         try {
@@ -420,12 +417,11 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
                             className="w-2/3 p-2 border rounded"
                         >
                             <option value="">Select Location</option>
-                            {Array.isArray(locations) &&
-                                locations.map((loc) => (
-                                    <option key={loc.locationId} value={loc.locationName}>
-                                        {loc.locationName}
-                                    </option>
-                                ))}
+                            {locations.map((loc) => (
+                                <option key={loc.locationId} value={loc.locationId}>
+                                    {loc.locationName}
+                                </option>
+                            ))}
                         </select>
                     </div>
 

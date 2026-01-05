@@ -36,7 +36,7 @@ export default function DashboardLayout({ user, onLogout }) {
       )}
 
       {/* Page Layout */}
-      <div className="flex flex-1">
+      <div className="flex">
         {/* Fixed Sidebar */}
         {!shouldHideSidebar && <Sidebar />}
 

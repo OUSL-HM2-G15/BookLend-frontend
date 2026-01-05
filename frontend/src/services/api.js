@@ -5,7 +5,7 @@ import axios from 'axios';
 // All backend API calls will go through this
 // ---------------------------
 const api = axios.create({
-    baseURL: 'http://localhost:8080/api/auth', // backend base URL
+    baseURL:  `${process.env.REACT_APP_API_URL}/auth`, // backend base URL
     headers: {
         'Content-Type': 'application/json',
     },
