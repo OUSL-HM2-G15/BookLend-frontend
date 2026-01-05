@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfirmModal from "../components/ConfirmModal";
-//import axios from "axios";
-
 
 // Flower Logo Component
 const FlowerLogo = () => (
@@ -72,12 +70,13 @@ const DashboardHeader = ({ user, onLogout, setShowAddBook }) => {
                 Logout
               </button>
 
-              <img
-                src={userImage}
-                alt={userName}
-                className="w-10 h-10 rounded-full cursor-pointer border border-gray-300"
-                onClick={handleProfile}
-              />
+
+            <img
+              src={userImage}
+              alt={userName}
+              className="w-10 h-10 rounded-full cursor-pointer border border-gray-300"
+              onClick={handleProfile}
+            />
             </div>
           </div>
         </div>
