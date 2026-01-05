@@ -15,10 +15,8 @@ export default function Dashboard({ user, onLogout }) {
     <Routes>
       <Route element={<DashboardLayout user={user} onLogout={onLogout} />}>
         <Route index element={<Navigate to="explore" replace />} /> {/* default page */}
-        {/* Main Pages */}
         <Route path="explore" element={<Explore />} />
         <Route path="my-books" element={<MyBooks />} />
-
         <Route path="my-borrowed-books" element={<BorrowedBooks  />} />
         <Route path="my-lended-books" element={<MyLendedBooks />} />
         <Route path="requests-received" element={<RequestsReceived  />} />

@@ -24,21 +24,22 @@ const DashboardHeader = ({ user, onLogout, setShowAddBook }) => {
   const handleProfile = () => navigate("/profile");
 
   const handleLogout = async () => {
-    setLoading(true); // show "Logging out..." 
 
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay
+  setLoading(true); // show "Logging out..." 
 
-      if (onLogout) {
-        await onLogout(); // wait for app logout
-      }
+  try {
+    await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay
 
-      setShowConfirm(false);
-      navigate("/"); // redirect after logout
-    } finally {
-      setLoading(false);
+    if (onLogout) {
+      await onLogout(); // wait for app logout
     }
-  };
+
+    setShowConfirm(false);
+    navigate("/"); // redirect after logout
+  } finally {
+    setLoading(false);
+  }
+};
 
   const userImage = user?.profilePic || "https://via.placeholder.com/40";
   const userName = user?.name || "Guest";
@@ -53,8 +54,7 @@ const DashboardHeader = ({ user, onLogout, setShowAddBook }) => {
               <FlowerLogo />
               <span className="text-2xl font-bold text-gray-900 tracking-tight">BookLend</span>
             </div>
-
-            {/* Right Side: Buttons + Profile */}
+            {/* Right: Buttons */}
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => setShowAddBook(true)}
@@ -69,7 +69,6 @@ const DashboardHeader = ({ user, onLogout, setShowAddBook }) => {
               >
                 Logout
               </button>
-
 
             <img
               src={userImage}
