@@ -13,6 +13,7 @@ const FlowerLogo = () => (
     <path d="M12 2a1 1 0 0 1 1 1v2.07A7.002 7.002 0 0 1 19.93 11H22a1 1 0 1 1 0 2h-2.07A7.002 7.002 0 0 1 13 18.93V21a1 1 0 1 1-2 0v-2.07A7.002 7.002 0 0 1 4.07 13H2a1 1 0 1 1 0-2h2.07A7.002 7.002 0 0 1 11 4.07V2a1 1 0 0 1 1-1zM12 8a4 4 0 1 0 0 8a4 4 0 0 0 0-8z" />
   </svg>
 );
+
 // for test logout right now
 const DashboardHeader = ({ user, onLogout, setShowAddBook }) => {
   const [showConfirm, setShowConfirm] = useState(false);
@@ -20,7 +21,7 @@ const DashboardHeader = ({ user, onLogout, setShowAddBook }) => {
   const navigate = useNavigate();
 
   //  Navigation handlers
-  // const handleProfile = () => navigate("/profile");
+  const handleProfile = () => navigate("/profile");
 
   const handleLogout = async () => {
   setLoading(true); // show "Logging out..." 
@@ -69,13 +70,12 @@ const DashboardHeader = ({ user, onLogout, setShowAddBook }) => {
                 Logout
               </button>
 
-              <img
-                src={userImage}
-                alt={userName}
-                className="w-10 h-10 rounded-full cursor-pointer border border-gray-300"
-                 //onClick={handleProfile}
-              />
-            </div>
+            <img
+              src={userImage}
+              alt={userName}
+              className="w-10 h-10 rounded-full cursor-pointer border border-gray-300"
+              onClick={handleProfile}
+            />
           </div>
         </div>
       </header>
