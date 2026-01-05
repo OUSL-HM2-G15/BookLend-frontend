@@ -1,6 +1,6 @@
 import React from "react";
 //import axios from "axios";
-//import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // Flower Logo Component
 const FlowerLogo = () => (
@@ -15,7 +15,7 @@ const FlowerLogo = () => (
 );
 
 const DashboardHeader = ({ user, setShowAddBook }) => { 
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   // 🔹 Handle logout
   // const handleLogout = async () => {
@@ -32,7 +32,7 @@ const DashboardHeader = ({ user, setShowAddBook }) => {
   // };
 
   //  Navigation handlers
-  // const handleProfile = () => navigate("/profile");
+  const handleProfile = () => navigate("/profile");
 
   const userImage = user?.profilePic || "https://via.placeholder.com/40";
   const userName = user?.name || "Guest";
@@ -70,7 +70,7 @@ const DashboardHeader = ({ user, setShowAddBook }) => {
               src={userImage}
               alt={userName}
               className="w-10 h-10 rounded-full cursor-pointer border border-gray-300"
-              //onClick={handleProfile}
+              onClick={handleProfile}
             />
           </div>
 
