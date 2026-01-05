@@ -45,7 +45,7 @@ function Explore() {
   };
 
   fetchData();
-}, );
+}, []);
 
   // Handle search and filter
   const handleSearch = () => {
