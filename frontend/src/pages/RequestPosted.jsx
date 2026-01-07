@@ -1,19 +1,20 @@
 import React, { useState } from "react";
-import RequestBookPopup from "../components/RequestModal";
+import RequestModal from "../components/RequestModal";
 
 const RequestPosted = () => {
     const [showPopup, setShowPopup] = useState(false);
-    const requests = [];
+    const requests = []; // Can be fetched later from API
 
     return (
         <div className="relative flex-1 p-6 bg-gray-50 min-h-screen">
-            {/* Centered requests container */}
+            {/* Header */}
             <div className="mb-6 flex justify-between items-start">
                 <h1 className="text-3xl font-semibold text-gray-900">
                     Requests Posted
                 </h1>
             </div>
 
+            {/* Requests List */}
             <div className="max-w-4xl mx-auto space-y-6">
                 {requests.length === 0 ? (
                     <p className="text-gray-500">No requests posted yet.</p>
@@ -39,6 +40,7 @@ const RequestPosted = () => {
                 )}
             </div>
 
+            {/* New Request Button */}
             <div className="mt-8 flex justify-start">
                 <button
                     onClick={() => setShowPopup(true)}
@@ -48,9 +50,8 @@ const RequestPosted = () => {
                 </button>
             </div>
 
-            {showPopup && (
-                <RequestBookPopup onClose={() => setShowPopup(false)} />
-            )}
+            {/* Request Modal */}
+            {showPopup && <RequestModal onClose={() => setShowPopup(false)} />}
         </div>
     );
 };

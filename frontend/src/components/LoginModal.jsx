@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AlertMessage from './AlertMessage';
+import { message } from "antd";
 import ForgotPasswordModal from './ForgotPasswordModel';
 import ResetPasswordModal from './ResetPasswordModal';
 
 const LoginModal = ({ isOpen, onClose, onOpenRegister, onLoginSuccess, onOpenForgot }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [alert, setAlert] = useState(null);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -25,7 +24,6 @@ const LoginModal = ({ isOpen, onClose, onOpenRegister, onLoginSuccess, onOpenFor
         if (!isOpen) {
             setUsername('');
             setPassword('');
-            setAlert(null);
             setShowPassword(false);
         }
     }, [isOpen]);
@@ -54,7 +52,7 @@ const LoginModal = ({ isOpen, onClose, onOpenRegister, onLoginSuccess, onOpenFor
 
             if (res.ok) {
                 localStorage.setItem('token', data.token); // Save JWT token
-                setAlert({ message: 'Login successful!', type: 'success' });
+                message.success("Login successful");
 
                 // ** Fetch user profile (optional, comment for now)
                 // const userRes = await fetch(`${process.env.REACT_APP_API_URL}/api/users/me`, {
@@ -67,16 +65,16 @@ const LoginModal = ({ isOpen, onClose, onOpenRegister, onLoginSuccess, onOpenFor
                     onClose();
                     onLoginSuccess(); // You can pass user data later
                     navigate('/explore'); // Redirect to Explore page after login
-                }, 500);
+                }, 300);
             } else if (res.status === 401) {
-                setAlert({ message: data.message || 'Invalid username or password', type: 'error' });
+                 message.error(data.message || "Invalid username or password");
             } else {
-                setAlert({ message: data.message || 'Something went wrong', type: 'error' });
+                message.error(data.message || "Something went wrong");
             }
 
         } catch (error) {
             console.error(error);
-            setAlert({ message: 'Error connecting to server.', type: 'error' });
+            message.error("Error connecting to server");
         } finally {
             setLoading(false);
         }
@@ -99,11 +97,8 @@ const LoginModal = ({ isOpen, onClose, onOpenRegister, onLoginSuccess, onOpenFor
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-10"
-            // NEW: Fade in animation using Tailwind + inline styles
-            style={{ animation: 'fadeIn 0.3s ease forwards' }}
-
-            aria-modal='true'
-            role='dialog'
+            // Fade in animation using Tailwind + inline styles
+            style={{ animation: 'fadeIn 0.3s ease forwards' }} aria-modal='true'role='dialog'
         >
 
             {/*Model container with scale,fade animation also */}
@@ -111,7 +106,6 @@ const LoginModal = ({ isOpen, onClose, onOpenRegister, onLoginSuccess, onOpenFor
                 <h2 className="text-2xl font-bold text-center mb-4"
                     style={{ animation: 'scaleIn 0.3s ease forwards' }}>Log In</h2>
 
-                {alert && <AlertMessage message={alert.message} type={alert.type} onClose={() => setAlert(null)} />}
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="mb-4">
@@ -220,7 +214,7 @@ const LoginModal = ({ isOpen, onClose, onOpenRegister, onLoginSuccess, onOpenFor
                     <button
                         type="button"
                         onClick={() => { onClose(); onOpenRegister(); }}
-                        className="text-indigo-600 font-semibold hover:underline"
+                        className="text-blue-600 font-semibold hover:underline"
                     >
                         Register
                     </button>

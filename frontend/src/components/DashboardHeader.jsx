@@ -28,7 +28,6 @@ const DashboardHeader = ({ user, onLogout, setShowAddBook }) => {
   setLoading(true); // show "Logging out..." 
 
   try {
-    await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay
 
     if (onLogout) {
       await onLogout(); // wait for app logout

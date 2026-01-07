@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from "react";
+import { notification } from "antd"; // AntD notifications
+import { LOCATIONS } from "../utils/locations"; // move locations to utils
 
-const RequestBookPopup = ({ onClose }) => {
-    // Location options defined in constant array
-    const locations = ["Colombo", "Kandy", "Galle", "Jaffna", "Negombo"];
-
-    // Component states
+const RequestModal = ({ onClose }) => {
     const [bookTitle, setBookTitle] = useState("");
     const [author, setAuthor] = useState("");
     const [location, setLocation] = useState("");
-
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
-        setIsVisible(true); // trigger enter animation
+        setIsVisible(true);
 
         const handleEsc = (e) => {
             if (e.key === "Escape") handleClose();
@@ -22,35 +19,46 @@ const RequestBookPopup = ({ onClose }) => {
     }, []);
 
     const handleClose = () => {
-        setIsVisible(false); // start exit animation
-        setTimeout(onClose, 300); // wait for animation to finish before unmount
+        setIsVisible(false);
+        setTimeout(onClose, 300);
     };
 
-    // Form submission handling
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        // Validate if all fields are filled
         if (!bookTitle || !author || !location) {
-            alert("Please fill all fields before submitting it");
+            notification.error({
+                message: "Error",
+                description: "Please fill all fields before submitting.",
+                placement: "topRight",
+                duration: 3,
+            });
             return;
         }
 
-        const requestData = { bookTitle, author, location };
-        console.log("Book Request Submitted:", requestData);
+        // Replace console.log with notification
+        notification.success({
+            message: "Success",
+            description: `Your request for the book "${bookTitle}" by "${author}" has been submitted successfully!`,
+            placement: "topRight",
+            duration: 3,
+        });
 
-        alert("Book request submitted successfully!");
-        handleClose(); // Close popup after submit that
+        handleClose();
     };
 
     return (
-        // Overlay background
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50" onClick={handleClose}>
-            {/* Popup container */}
-            <div className={`relative bg-white w-full max-w-md rounded-lg shadow-lg p-6 transform transition-all duration-300 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-                }`}
+        <div
+            className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
+            onClick={handleClose}
+        >
+            <div
+                className={`relative bg-white w-full max-w-md rounded-lg shadow-lg p-6 transform transition-all duration-300 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                    }`}
                 onClick={(e) => e.stopPropagation()}
             >
-                {/*  Close button */}
+                {/* Close button */}
                 <button
                     onClick={handleClose}
                     className="absolute top-3 right-4 text-gray-500 hover:text-gray-700 text-xl"
@@ -66,7 +74,6 @@ const RequestBookPopup = ({ onClose }) => {
                     Can't find what you're looking for? Let the community know!
                 </p>
 
-                {/* Form */}
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {/* Book Title */}
                     <div>
@@ -98,7 +105,7 @@ const RequestBookPopup = ({ onClose }) => {
                         />
                     </div>
 
-                    {/* Location Dropdown got from array */}
+                    {/* Location */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                             Location
@@ -110,8 +117,7 @@ const RequestBookPopup = ({ onClose }) => {
                             required
                         >
                             <option value="">Select a location</option>
-                            {/* here map through locations array */}
-                            {locations.map((loc, index) => (
+                            {LOCATIONS.map((loc, index) => (
                                 <option key={index} value={loc}>
                                     {loc}
                                 </option>
@@ -119,7 +125,7 @@ const RequestBookPopup = ({ onClose }) => {
                         </select>
                     </div>
 
-                    {/* Submition button */}
+                    {/* Submit Button */}
                     <button
                         type="submit"
                         className="w-full bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition"
@@ -132,4 +138,4 @@ const RequestBookPopup = ({ onClose }) => {
     );
 };
 
-export default RequestBookPopup;
+export default RequestModal;

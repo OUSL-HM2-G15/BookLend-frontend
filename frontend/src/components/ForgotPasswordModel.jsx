@@ -1,35 +1,36 @@
 import React, { useState } from 'react';
-import AlertMessage from './AlertMessage';
+import { message } from "antd";
 
 const ForgotPasswordModal = ({ isOpen, onClose, onOpenReset }) => {
     const [email, setEmail] = useState('');
-    const [alert, setAlert] = useState(null);
     const [loading, setLoading] = useState(false);
+
+    if (!isOpen) return null;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setAlert(null);
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:8080/api/auth/forgot-password', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email })
-            });
-             const data = await res.json();
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/auth/forgot-password`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+            const data = await res.json();
 
             if (res.ok) {
-                setAlert({ message: data.message || 'Password reset link sent to you!', type: 'success' });
+                message.success(data.message || "Password reset link sent!");
                 setTimeout(() => {
                     onClose();
                     onOpenReset(data.token || email); // pass token/email to reset
                 }, 1500);
             } else {
-                setAlert({ message: data.message || 'Email is not found.', type: 'error' });
+                message.error(data.message || "Email not found");
             }
         } catch (error) {
             console.error(error);
-            setAlert({ message: 'Something went wrong.', type: 'error' });
+            message.error("Something went wrong. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -51,8 +52,6 @@ const ForgotPasswordModal = ({ isOpen, onClose, onOpenReset }) => {
 
                 <h2 className="text-xl font-bold mb-4 text-center">Forgot Password</h2>
 
-                 {alert && <AlertMessage message={alert.message} type={alert.type} onClose={() => setAlert(null)} />}
-
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <input
                         type="email"
@@ -70,8 +69,6 @@ const ForgotPasswordModal = ({ isOpen, onClose, onOpenReset }) => {
                         {loading ? 'Sending...' : 'Send Reset Link'}
                     </button>
                 </form>
-
-                {alert && <AlertMessage message={alert.message} type={alert.type} onClose={() => setAlert(null)} />}
             </div>
         </div>
     );
