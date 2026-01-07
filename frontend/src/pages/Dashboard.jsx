@@ -5,7 +5,7 @@ import MyBooks from "./MyBooks";
 import BorrowedBooks from "./BorrowedBooks";
 import MyLendedBooks from "./MyLendedBooks";
 import RequestsReceived from "./RequestsReceived";
-import RequestsPosted from "./RequestsPosted";
+import RequestsPosted from "./RequestPosted";
 import BookDetails from "./BookDetails";
 import MyBookDetails from "./MyBookDetails";
 import ProfilePage from "./ProfilePage";
