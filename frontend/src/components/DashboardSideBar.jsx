@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 
 const Sidebar = () => {
   const links = [
-    { name: "Explore", path: "/explore" }, // not use file paths, need route paths
+    { name: "Explore", path: "/explore" },
     { name: "My Books", path: "/my-books" },
     { name: "My Borrowed Books", path: "/my-borrowed-books" },
     { name: "My Lended Books", path: "/my-lended-books" },
