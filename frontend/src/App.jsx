@@ -3,7 +3,6 @@ import { IKContext } from "imagekitio-react"; // to access imagekit.io globally
 import Dashboard from "./pages/Dashboard";
 import { Routes, Route, BrowserRouter} from "react-router-dom";
 import Home from "./pages/Home";
-import BookDetails from "./pages/BookDetails";
 
 function App() {
 
@@ -31,8 +30,6 @@ function App() {
 
         {/* Dashboard route */}
         <Route path="/*" element={<Dashboard />} />
-
-        <Route path="/books/:id" element={<BookDetails />} />
 
         {/* Catch-all for invalid paths */}
         <Route path="*" element={<div>Page not found</div>} />

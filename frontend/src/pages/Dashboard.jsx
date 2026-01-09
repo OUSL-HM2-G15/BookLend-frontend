@@ -4,10 +4,13 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Explore from "./Explore";
 import MyBooks from "./MyBooks";
-// import MyBorrowedBooks from "./MyBorrowedBooks";
-// import MyLendedBooks from "./MyLendedBooks";
-// import RequestsReceived from "./RequestsReceived";
-// import RequestsPosted from "./RequestsPosted";
+import BorrowedBooks from "./BorrowedBooks";
+import MyLendedBooks from "./MyLendedBooks";
+import RequestsReceived from "./RequestsReceived";
+import RequestsPosted from "./RequestsPosted";
+import BookDetails from "./BookDetails";
+import MyBookDetails from "./MyBookDetails";
+import ProfilePage from "./ProfilePage";
 
 export default function Dashboard() {
   // const [user, setUser] = useState(null); // store user data from backend
@@ -39,12 +42,22 @@ export default function Dashboard() {
             <Route index element={<Navigate to="explore" replace />} />
 
             {/* Main Pages */}
-            <Route path="explore" element={<Explore  />} />  {/*need to pass user={user}*/}
+            <Route path="explore" element={<Explore  />} />
             <Route path="my-books" element={<MyBooks  />} />
-            {/*<Route path="my-borrowed-books" element={<MyBorrowedBooks user={user} />} />
-            <Route path="my-lended-books" element={<MyLendedBooks user={user} />} />
-            <Route path="requests-received" element={<RequestsReceived user={user} />} />
-            <Route path="requests-posted" element={<RequestsPosted user={user} />} />  */}
+            <Route path="my-borrowed-books" element={<BorrowedBooks  />} />
+            <Route path="my-lended-books" element={<MyLendedBooks />} />
+            <Route path="requests-received" element={<RequestsReceived  />} />
+            <Route path="requests-posted" element={<RequestsPosted  />} /> 
+            
+              {/* Book detail - user view */}
+              <Route path="books/:id" element={<BookDetails />} />
+
+              {/* Book detail - owner view */}
+              <Route path="my-books/:id" element={<MyBookDetails />} />
+
+              {/* Profile Page */}
+              <Route path="profile" element={<ProfilePage />} />
+
             </Route>
            </Routes>
   );
