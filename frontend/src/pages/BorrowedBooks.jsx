@@ -17,7 +17,8 @@ const BorrowedBooks = () => {
       try {
         setLoading(true);
         const token = localStorage.getItem("token"); // JWT from login
-        const res = await axios.get("http://localhost:8080/api/borrow-requests", {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/borrow-requests`, {
+          method: 'GET',
           headers: { Authorization: `Bearer ${token}` },
         });
         setBorrowedBooks(res.data); // backend should return array of borrowed books
@@ -52,7 +53,7 @@ const BorrowedBooks = () => {
       onOk: async () => {
         try {
           const token = localStorage.getItem("token");
-          await axios.delete(`http://localhost:8080/api/borrow-requests/${requestId}`, {
+          await axios.delete(`${process.env.REACT_APP_API_URL}/borrow-requests/${requestId}`,{
             headers: { Authorization: `Bearer ${token}` },
           });
           setBorrowedBooks(borrowedBooks.filter((book) => book.requestId !== requestId));
@@ -153,12 +154,12 @@ const BorrowedBooks = () => {
                       className={`px-3 py-1 rounded text-white text-sm ${book.status === "Pending"
 
 
-                          ? "bg-yellow-400"
-                          : book.status === "Accepted"
-                            ? "bg-green-500"
-                            : book.status === "Rejected"
-                              ? "bg-red-500"
-                              : "bg-gray-500"
+                        ? "bg-yellow-400"
+                        : book.status === "Accepted"
+                          ? "bg-green-500"
+                          : book.status === "Rejected"
+                            ? "bg-red-500"
+                            : "bg-gray-500"
                         }`}
                     >
                       {book.status}
