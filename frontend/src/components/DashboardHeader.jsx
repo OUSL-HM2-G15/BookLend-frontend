@@ -78,7 +78,6 @@ const DashboardHeader = ({ user, onLogout, setShowAddBook }) => {
             </div>
           </div>
         </div>
-       </div>
       </header>
 
       {/* Logout Confirmation Modal */}

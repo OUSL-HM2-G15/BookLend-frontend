@@ -86,8 +86,7 @@ function App() {
           <Route path="/*"
             element={<Dashboard user={user} onLogout={handleLogout} />} />
 
-          {/* Catch-all for invalid paths */}
-          <Route path="*" element={<div>Page not found</div>} />
+          
         </Routes>
       </BrowserRouter>
     </IKContext>
