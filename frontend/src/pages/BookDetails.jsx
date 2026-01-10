@@ -5,6 +5,7 @@ import axios from "axios";
 import { useParams, Link } from "react-router-dom";
 import ConfirmModal from "../components/ConfirmModal";
 import { message, Tooltip } from "antd";
+import { getToken } from "../utils/authToken";
 
 const BookDetails = () => {
   const { id } = useParams(); // URL: /book/:id
@@ -35,7 +36,12 @@ const handleConfirm = async () => {
   useEffect(() => {
     const fetchBook = async () => {
       try {
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}/books/${id}`);
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/books/${id}`, {
+                  headers: {
+                    Authorization: `Bearer ${getToken()}`,
+                  },
+        });
+        
         setBook(res.data);
       } catch (err) {
         console.error("Failed to load book:", err);
