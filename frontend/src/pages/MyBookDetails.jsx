@@ -64,7 +64,6 @@ const MyBookDetailPage = () => {
       locationId: book.locationId,
       categoryId: book.categoryId,
     };
-    console.log("Payload for update:", payload);
 
     axios
       .put(`${API_URL}/books/me/${id}`, payload, {

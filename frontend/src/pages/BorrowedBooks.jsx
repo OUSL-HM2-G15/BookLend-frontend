@@ -336,7 +336,7 @@ const BorrowedBooks = () => {
               </div>
             ))
           ) : (
-            <p className="text-gray-700 text-lg">You have no borrowed books.</p>
+            <p className="text-center text-gray-600 py-10">You have no borrowed books.</p> 
           )
         ) : null}
       </div>
