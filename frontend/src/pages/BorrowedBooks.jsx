@@ -185,27 +185,27 @@ const BorrowedBooks = () => {
 
   // Error state
   if (error) {
-  return (
-    <div className="h-screen flex flex-col items-center justify-center text-center">
-      <p className="text-lg text-red-500 mb-4">{error}</p>
-      <button
-        onClick={fetchBorrowedBooks}
-        className="px-5 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200"
-      >
-        Retry
-      </button>
-    </div>
-  );
-}
+    return (
+      <div className="h-screen flex flex-col items-center justify-center text-center">
+        <p className="text-lg text-red-500 mb-4">{error}</p>
+        <button
+          onClick={fetchBorrowedBooks}
+          className="px-5 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
       <h1 className="text-3xl font-semibold mb-8 text-black">My Borrowed Books</h1>
       {/* Page description */}
- <p className="text-gray-600 mb-6">
- This is where the list of books you have borrowed will be displayed.
- </p>
+      <p className="text-gray-600 mb-6">
+        This is where the list of books you have borrowed will be displayed.
+      </p>
 
       {/* Toggle Button for Borrow History */}
       <button
@@ -264,8 +264,8 @@ const BorrowedBooks = () => {
             ))
           ) : (
             <p className="text-gray-700 text-lg">{historyError || "No borrow history available."}</p>
-  )
-) : null}
+          )
+        ) : null}
 
         {/* Show Borrowed Books (Active Requests) */}
         {!showHistory ? (
@@ -321,7 +321,14 @@ const BorrowedBooks = () => {
                         </button>
                       )}
                       {(book.status === "Accepted" || book.status === "Returned") && (
-                        <Link to={`/books/${book.bookId}`} aria-label="View book details" className="border border-green-500 text-green-600 px-4 py-2 rounded hover:bg-green-50 transition duration-200">
+                        <Link
+                          to={`/books/${book.status === "Returned" ? book.bookId : book.requestId}`}
+                          state={{
+                            showOwnerInfo: book.status === "Accepted",
+                            hasActiveRequest: book.status === "Accepted" || book.status === "Pending"
+                          }}
+                          className="border border-green-500 text-green-600 px-4 py-2 rounded hover:bg-green-50 transition duration-200"
+                        >
                           View Details
                         </Link>
                       )}
@@ -336,7 +343,7 @@ const BorrowedBooks = () => {
               </div>
             ))
           ) : (
-            <p className="text-center text-gray-600 py-10">You have no borrowed books.</p> 
+            <p className="text-center text-gray-600 py-10">You have no borrowed books.</p>
           )
         ) : null}
       </div>
