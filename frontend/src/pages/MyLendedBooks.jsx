@@ -35,42 +35,6 @@ const MyLendedBooks = () => {
     fetchLendedBooks();
   }, []);
 
-  // ----------------- Handlers -----------------
-
-    const handleAccept = async (id) => {
-        try {
-          const token = localStorage.getItem("token");
-          await axios.put(
-            `${API_URL}/lended-books/${id}/accept`,
-            {},
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
-          fetchLendedBooks(); // Refresh list
-        } catch (err) {
-          console.error(err);
-          message.error(err.response?.data || "Failed to accept request");
-        }
-      };
-
-      const handleReject = async (id) => {
-        try {
-          const token = localStorage.getItem("token");
-          await axios.put(
-            `${API_URL}/lended-books/${id}/reject`,
-            {},
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
-          fetchLendedBooks(); // Refresh list
-        } catch (err) {
-          console.error(err);
-          message.error(err.response?.data || "Failed to reject request");
-        }
-      };
-
       const handleMarkReturned = async (id) => {
         try {
           const token = localStorage.getItem("token");
@@ -108,6 +72,10 @@ const MyLendedBooks = () => {
   if (loading) return <div className="p-6 text-center">Loading...</div>;
   if (error) return <div className="p-6 text-center text-red-500">{error}</div>;
 
+  const filteredLendedBooks = lendedBooks.filter(
+    (book) => book.status === "Accepted" || book.status === "Returned"
+  );
+
   return (
     <div className="p-6">
       {/* Page Header */}
@@ -122,12 +90,12 @@ const MyLendedBooks = () => {
 
       {/* Cards */}
       <div className="space-y-4">
-        {lendedBooks.length === 0 ? (
+        {filteredLendedBooks.length === 0 ? (
           <div className="text-center text-gray-500 py-10">
-            You haven’t lended any books yet.
+            No active lended books.
           </div>
         ) : (
-          lendedBooks.map((book) => (
+          filteredLendedBooks.map((book) => (
             <LendedBookCard
               key={book.requestId}
               imageUrl={book.imageUrl}
@@ -142,8 +110,6 @@ const MyLendedBooks = () => {
               status={book.status}
               acceptDisabled={book.acceptDisabled}
               disableReason={book.disableReason}
-              onAccept={() => handleAccept(book.requestId)}
-              onReject={() => handleReject(book.requestId)}
               onViewDetails={() => handleViewDetails(book)}
               onMarkReturned={() => handleMarkReturned(book.requestId)}
             />
