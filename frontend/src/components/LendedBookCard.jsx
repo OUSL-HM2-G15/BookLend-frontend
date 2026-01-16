@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { Tag } from "antd";
+import ConfirmModal from "./ConfirmModal";
 
 const statusStyles = {
   Pending: { border: "border-yellow-400", tag: "gold" },
@@ -27,6 +28,8 @@ const LendedBookCard = ({
   onMarkReturned,
 }) => {
   const style = statusStyles[status];
+
+  const [showRejectConfirm, setShowRejectConfirm] = useState(false);
 
   return (
     <div
@@ -98,7 +101,7 @@ const LendedBookCard = ({
                 Accept
             </button>
             <button
-                onClick={onReject}
+                onClick={() => setShowRejectConfirm(true)}
                 className="px-3 py-1.5 text-sm bg-red-500 text-white rounded-md hover:bg-red-600 transition"
             >
                 Reject
@@ -124,6 +127,18 @@ const LendedBookCard = ({
         )}
         </div>
       </div>
+      <ConfirmModal
+        open={showRejectConfirm}
+        title="Reject Request"
+        description="Are you sure you want to reject this borrow request? This action cannot be undone."
+        okText="Yes, Reject"
+        cancelText="Cancel"
+        onConfirm={() => {
+          onReject();               // actual reject logic
+          setShowRejectConfirm(false);
+        }}
+        onCancel={() => setShowRejectConfirm(false)}
+      />
     </div>
   );
 };
