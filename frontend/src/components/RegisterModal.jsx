@@ -46,7 +46,12 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
         const result = zxcvbn(value);
         setPasswordStrength(result.score);
         setPasswordStrengthMessage(result.feedback.suggestions.join(' '));
-        form.setFieldsValue({ password: value }); // update AntD form
+        form.setFields([
+            {
+                name: 'password',
+                value: value,
+            },
+        ]);
     };
 
     // ** helper function to validate Sri Lanka phone numbers**
@@ -78,8 +83,8 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
         }
 
         // ** Format numbers to +94XXXXXXXXX**
-        const contactFormatted = '+94' + (form.contactNumber.startsWith('0') ? form.contactNumber.slice(1) : form.contactNumber);
-        const whatsappFormatted = '+94' + (form.whatsappNumber.startsWith('0') ? form.whatsappNumber.slice(1) : form.whatsappNumber);
+        const contactFormatted = '+94' + (contactNumber.startsWith('0') ? contactNumber.slice(1) : contactNumber);
+        const whatsappFormatted = '+94' + (whatsappNumber.startsWith('0') ? whatsappNumber.slice(1) : whatsappNumber);
 
         // Payload send locationId instead of name
         // Backend will fetch locationName
@@ -125,7 +130,7 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
             <div className={`bg-white p-6 rounded-lg shadow-lg w-full max-w-lg relative ${form.password ? 'expanded' : ''}`}>
                 <h2 className="text-2xl font-bold text-center mb-4">Register</h2>
 
-                <form form={form} className="space-y-3" onFinish={handleSubmit}>
+                <Form form={form} onFinish={handleSubmit} className="space-y-3">
                     {/* Full Name */}
                     <div className="flex items-center space-x-4">
                         <label className="w-1/3 text-right font-medium">Full Name:</label>
@@ -304,7 +309,7 @@ const RegisterModal = ({ isOpen, onClose, onOpenLogin }) => {
                     >
                         Register
                     </button>
-                </form>
+                </Form>
 
                 <p className="mt-4 text-center text-sm">
                     Already have an account?{' '}
