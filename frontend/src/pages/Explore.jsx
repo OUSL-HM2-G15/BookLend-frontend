@@ -28,7 +28,7 @@ function Explore() {
   useEffect(() => {
   const fetchData = async () => {
     try {
-      const booksRes = await axios.get(`${API_URL}/books`);
+      const booksRes = await axios.get(`${API_URL}/books/public`);
       const locationsRes = await axios.get(`${API_URL}/locations`);
       const categoriesRes = await axios.get(`${API_URL}/categories`);
 
