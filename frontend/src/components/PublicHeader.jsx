@@ -14,7 +14,7 @@ const FlowerLogo = () => (
 
 export default function PublicHeader({ onLoginClick, onRegisterClick }) {
   return (
-    <header className="bg-white shadow-md">
+    <header className="bg-white shadow-md fixed top-0 left-0 w-full z-50">
       <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Left Side: Logo */}

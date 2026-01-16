@@ -322,7 +322,7 @@ const BorrowedBooks = () => {
                       )}
                       {(book.status === "Accepted" || book.status === "Returned") && (
                         <Link
-                          to={`/books/${book.status === "Returned" ? book.bookId : book.requestId}`}
+                          to={`${book.status === "Returned" ? book.bookId : book.requestId}`}
                           state={{
                             showOwnerInfo: book.status === "Accepted",
                             hasActiveRequest: book.status === "Accepted" || book.status === "Pending"

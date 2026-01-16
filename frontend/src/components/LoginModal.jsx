@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { message } from "antd";
 import ForgotPasswordModal from './ForgotPasswordModel';
 import ResetPasswordModal from './ResetPasswordModal';
@@ -8,7 +7,6 @@ const LoginModal = ({ isOpen, onClose, onOpenRegister, onLoginSuccess, onOpenFor
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
 
 
     // Password visible toggle
@@ -19,14 +17,7 @@ const LoginModal = ({ isOpen, onClose, onOpenRegister, onLoginSuccess, onOpenFor
     const [isResetOpen, setIsResetOpen] = useState(false);
     const [resetToken, setResetToken] = useState(''); // To pass token to ResetPasswordModal
 
-    // When modal closes, clear data (for safety)
-    useEffect(() => {
-        if (!isOpen) {
-            setUsername('');
-            setPassword('');
-            setShowPassword(false);
-        }
-    }, [isOpen]);
+    if (!isOpen) return null;
 
     // It Handles the login form submit
     const handleSubmit = async (e) => {
@@ -40,32 +31,13 @@ const LoginModal = ({ isOpen, onClose, onOpenRegister, onLoginSuccess, onOpenFor
                 body: JSON.stringify({ username, password })
             });
 
-            // Handle JSON or plain text responses
-            let data;
-            const contentType = res.headers.get('content-type');
-            if (contentType && contentType.includes('application/json')) {
-                data = await res.json();
-            } else {
-                data = { message: await res.text() };
-            }
-
+            const data = await res.json();
 
             if (res.ok) {
                 localStorage.setItem('token', data.token); // Save JWT token
-                message.success("Login successful");
-
-                // ** Fetch user profile (optional, comment for now)
-                // const userRes = await fetch(`${process.env.REACT_APP_API_URL}/api/users/me`, {
-                //     headers: { 'Authorization': `Bearer ${data.token}` }
-                // });
-                // const userData = await userRes.json();
-                // onLoginSuccess(userData);
-
-                setTimeout(() => {
-                    onClose();
-                    onLoginSuccess(); // You can pass user data later
-                    navigate('/explore'); // Redirect to Explore page after login
-                }, 300);
+                message.success("Login successful");                
+                onLoginSuccess(); 
+                onClose();
             } else if (res.status === 401) {
                  message.error(data.message || "Invalid username or password");
             } else {

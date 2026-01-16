@@ -238,7 +238,7 @@ export default function AddBookModal({ open, onClose, onSuccess }) {
               >
                 <option value="">Select Category</option>
                 {categories.map((cat) => (
-                  <option key={cat.categoryId} value={cat.categoryName}>
+                  <option key={cat.categoryId} value={cat.categoryId}>
                     {cat.categoryName}
                   </option>
                 ))}
@@ -258,7 +258,7 @@ export default function AddBookModal({ open, onClose, onSuccess }) {
               >
                 <option value="">Select Location</option>
                 {locations.map((loc) => (
-                  <option key={loc.locationId} value={loc.locationName}>
+                  <option key={loc.locationId} value={loc.locationId}>
                     {loc.locationName}
                   </option>
                 ))}
