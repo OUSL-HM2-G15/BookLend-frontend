@@ -39,7 +39,7 @@ const RequestPosted = () => {
         return;
       }
 
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/book-requests/me`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/book-requests/user`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

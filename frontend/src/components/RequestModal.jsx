@@ -21,10 +21,7 @@ const RequestModal = ({ onClose, onRequestCreated }) => {
 
         const fetchLocations = async () => {
             try {
-                const token = localStorage.getItem("token");
-                const response = await axios.get(`${API_URL}/locations`, {
-                    headers: { Authorization: `Bearer ${token}` }, // send JWT
-                });
+                const response = await axios.get(`${API_URL}/locations`);  
                 setLocations(response.data);
             } catch (error) {
                 console.error("Error fetching locations:", error);
@@ -37,7 +34,7 @@ const RequestModal = ({ onClose, onRequestCreated }) => {
         };
         window.addEventListener("keydown", handleEsc);
         return () => window.removeEventListener("keydown", handleEsc);
-    }, [handleClose, API_URL]);
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
