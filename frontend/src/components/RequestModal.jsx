@@ -1,15 +1,33 @@
-import React, { useState, useEffect } from "react";
-import { notification } from "antd"; // AntD notifications
-import { LOCATIONS } from "../utils/locations"; // move locations to utils
+import React, { useState, useEffect, useCallback } from "react";
+import { notification } from "antd";
+import axios from "axios";
 
-const RequestModal = ({ onClose }) => {
+const RequestModal = ({ onClose, onRequestCreated }) => {
     const [bookTitle, setBookTitle] = useState("");
     const [author, setAuthor] = useState("");
     const [location, setLocation] = useState("");
+    const [locations, setLocations] = useState([]);
     const [isVisible, setIsVisible] = useState(false);
+
+    const API_URL = process.env.REACT_APP_API_URL;
+
+    const handleClose = useCallback(() => {
+        setIsVisible(false);
+        setTimeout(onClose, 300);
+    }, [onClose]);
 
     useEffect(() => {
         setIsVisible(true);
+
+        const fetchLocations = async () => {
+            try {
+                const response = await axios.get(`${API_URL}/locations`);  
+                setLocations(response.data);
+            } catch (error) {
+                console.error("Error fetching locations:", error);
+            }
+        };
+        fetchLocations();
 
         const handleEsc = (e) => {
             if (e.key === "Escape") handleClose();
@@ -18,15 +36,10 @@ const RequestModal = ({ onClose }) => {
         return () => window.removeEventListener("keydown", handleEsc);
     }, []);
 
-    const handleClose = () => {
-        setIsVisible(false);
-        setTimeout(onClose, 300);
-    };
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validate if all fields are filled
+        // Check if all fields are filled
         if (!bookTitle || !author || !location) {
             notification.error({
                 message: "Error",
@@ -37,16 +50,40 @@ const RequestModal = ({ onClose }) => {
             return;
         }
 
-        // Replace console.log with notification
-        notification.success({
-            message: "Success",
-            description: `Your request for the book "${bookTitle}" by "${author}" has been submitted successfully!`,
-            placement: "topRight",
-            duration: 3,
-        });
+        try {
+            const token = localStorage.getItem("token");
+            await axios.post(
+                `${API_URL}/book-requests`,
+                {
+                    title: bookTitle,
+                    author,
+                    locationId: Number(location),
+                },
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
 
-        handleClose();
+            notification.success({
+                message: "Success",
+                description: `Your request for "${bookTitle}" by "${author}" has been submitted!`,
+                placement: "topRight",
+                duration: 3,
+            });
+
+            onRequestCreated(); // Trigger fetchRequests to reload the book requests
+            handleClose();
+        } catch (error) {
+            console.error("Error submitting request:", error);
+            notification.error({
+                message: "Error",
+                description: "There was an error submitting your request.",
+                placement: "topRight",
+                duration: 3,
+            });
+        }
     };
+
 
     return (
         <div
@@ -58,7 +95,6 @@ const RequestModal = ({ onClose }) => {
                     }`}
                 onClick={(e) => e.stopPropagation()}
             >
-                {/* Close button */}
                 <button
                     onClick={handleClose}
                     className="absolute top-3 right-4 text-gray-500 hover:text-gray-700 text-xl"
@@ -66,16 +102,14 @@ const RequestModal = ({ onClose }) => {
                     ×
                 </button>
 
-                {/* Header */}
                 <h2 className="text-2xl font-bold text-center text-gray-900">
                     Request a Book
                 </h2>
                 <p className="text-center text-gray-500 mb-6">
-                    Can't find what you're looking for? Let the community know!
+                    Can't find it? Let the community know!
                 </p>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    {/* Book Title */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                             Book Title
@@ -90,7 +124,6 @@ const RequestModal = ({ onClose }) => {
                         />
                     </div>
 
-                    {/* Author */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                             Author
@@ -105,7 +138,6 @@ const RequestModal = ({ onClose }) => {
                         />
                     </div>
 
-                    {/* Location */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                             Location
@@ -117,15 +149,14 @@ const RequestModal = ({ onClose }) => {
                             required
                         >
                             <option value="">Select a location</option>
-                            {LOCATIONS.map((loc, index) => (
-                                <option key={index} value={loc}>
-                                    {loc}
+                            {locations.map((loc) => (
+                                <option key={loc.locationId} value={loc.locationId}>
+                                    {loc.locationName}
                                 </option>
                             ))}
                         </select>
                     </div>
 
-                    {/* Submit Button */}
                     <button
                         type="submit"
                         className="w-full bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition"
@@ -135,7 +166,9 @@ const RequestModal = ({ onClose }) => {
                 </form>
             </div>
         </div>
+
     );
 };
+
 
 export default RequestModal;
