@@ -16,7 +16,9 @@ export default function DashboardLayout({ user, onLogout }) {
   };
 
   const shouldHideSidebar =
-    location.pathname.startsWith("/books/") || location.pathname.startsWith("/my-books/");
+    location.pathname.startsWith("/dashboard/explore/") ||
+    location.pathname.startsWith("/dashboard/my-books/") ||
+    location.pathname.startsWith("/dashboard/my-borrowed-books/");
 
   return (
     <div className="bg-white min-h-screen">

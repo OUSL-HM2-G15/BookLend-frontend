@@ -71,7 +71,7 @@ const RequestModal = ({ onClose, onRequestCreated }) => {
                 duration: 3,
             });
 
-            onRequestCreated(); // Trigger fetchRequests to reload the book requests
+            onRequestCreated?.(); // Trigger fetchRequests to reload the book requests
             handleClose();
         } catch (error) {
             console.error("Error submitting request:", error);
