@@ -12,43 +12,43 @@ function App() {
   const API_URL = process.env.REACT_APP_API_URL;
 
   // Check token on app load
-    const fetchProfile = async () => {
-        const token = localStorage.getItem("token");
-        if (!token) {
+  const fetchProfile = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setUser(null);
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_URL}/users/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          localStorage.removeItem("token"); // Token expired or invalid
           setUser(null);
-          return;
+        } else {
+          // Other backend errors
+          const errorData = await res.json();
+          console.error("API Error:", errorData.message || "Unknown error");
         }
+        return;
+      }
 
-        try {
-          const res = await fetch(`${API_URL}/users/me`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+      const data = await res.json();
+      setUser(data); // real user
+    } catch (err) {
+      // Network or unexpected errors
+      console.error("Fetch failed:", err);
+    }
+  };
 
-          if (!res.ok) {
-            if (res.status === 401) {
-              localStorage.removeItem("token"); // Token expired or invalid
-              setUser(null);
-            } else {
-              // Other backend errors
-              const errorData = await res.json();
-              console.error("API Error:", errorData.message || "Unknown error");
-            }
-            return;
-          }
-
-          const data = await res.json();
-          setUser(data); // real user
-        } catch (err) {
-            // Network or unexpected errors
-            console.error("Fetch failed:", err);       
-        }
-    };
-
-    useEffect(() => {
-      fetchProfile();
-    }, [API_URL]);
+  useEffect(() => {
+    fetchProfile();
+  }, [API_URL]);
 
   // Global logout function
   const handleLogout = async () => {
