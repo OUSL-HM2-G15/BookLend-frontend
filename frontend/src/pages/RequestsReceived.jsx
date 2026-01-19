@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Tabs, message } from "antd";
 import LendedBookCard from "../components/LendedBookCard";
-// import BookWantedRequestCard from "../components/BookWantedRequestCard";
+import BookWantedRequestCard from "../components/BookWantedRequestCard";
 
 const { TabPane } = Tabs;
 
@@ -10,7 +10,7 @@ const RequestsReceived = () => {
   const API_URL = process.env.REACT_APP_API_URL;
 
   const [borrowRequests, setBorrowRequests] = useState([]);
-  // const [wantedRequests, setWantedRequests] = useState([]);
+  const [wantedRequests, setWantedRequests] = useState([]);
   const [rejectedBorrowRequests, setRejectedBorrowRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -20,13 +20,13 @@ const RequestsReceived = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-      const [borrowRes] = await Promise.all([ // [borrowRes, wantedRes]
+      const [borrowRes, wantedRes] = await Promise.all([ // [borrowRes, wantedRes]
         axios.get(`${API_URL}/lended-books`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        // axios.get(`${API_URL}/book-requests`, {
-        //   headers: { Authorization: `Bearer ${token}` },
-        // }),
+        axios.get(`${API_URL}/book-requests/received`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
       ]);
 
       setBorrowRequests(
@@ -37,7 +37,7 @@ const RequestsReceived = () => {
         borrowRes.data.filter((b) => b.status === "Rejected")
       );
 
-      // setWantedRequests(wantedRes.data);
+      setWantedRequests(wantedRes.data);
     } catch (err) {
       console.error(err);
       message.error("Failed to load requests");
@@ -82,14 +82,14 @@ const RequestsReceived = () => {
     }
   };
 
-  // const handleRespond = () => {
-  //   message.success("The requester has been notified!");
-  // };
+  const handleRespond = () => {
+    message.success("The requester has been notified!");
+  };
 
   // ---------------- Render ----------------
 
   return (
-    <div className="p-6">
+    <div className="p-2">
       <h1 className="text-2xl font-semibold mb-4">Requests Received</h1>
 
       <Tabs defaultActiveKey="borrow" type="card">
@@ -139,7 +139,7 @@ const RequestsReceived = () => {
 
 
         {/* Book Wanted Requests */}
-        {/* <TabPane tab={`Book Wanted (${wantedRequests.length})`} key="wanted">
+        <TabPane tab={`Book Wanted (${wantedRequests.length})`} key="wanted">
           {loading ? (
             <p className="text-center text-gray-500">Loading...</p>
           ) : wantedRequests.length === 0 ? (
@@ -150,16 +150,18 @@ const RequestsReceived = () => {
             <div className="space-y-4">
               {wantedRequests.map((req) => (
                 <BookWantedRequestCard
-                  key={req.id}
-                  title={req.bookTitle}
-                  requester={req.requestedBy}
-                  location={req.location}
+                  key={req.bookRequestId}
+                  title={req.title}
+                  requester={req.requesterName}
+                  location={req.locationName}
+                  author={req.author}
+                  createdDate={req.createdAt}
                   onRespond={handleRespond}
                 />
               ))}
             </div>
           )}
-        </TabPane> */}
+        </TabPane>
       </Tabs>
     </div>
   );
