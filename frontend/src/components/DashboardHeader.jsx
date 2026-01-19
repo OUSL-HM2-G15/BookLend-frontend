@@ -21,7 +21,7 @@ const DashboardHeader = ({ user, onLogout, setShowAddBook }) => {
   const navigate = useNavigate();
 
   //  Navigation handlers
-  const handleProfile = () => navigate("/profile");
+  const handleProfile = () => navigate("/dashboard/profile");
 
   const handleLogout = async () => {
 

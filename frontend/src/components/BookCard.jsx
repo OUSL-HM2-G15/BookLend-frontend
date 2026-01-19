@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfirmModal from "../components/ConfirmModal";
 import { message } from "antd";
+import { getToken } from "../utils/authToken";
+import axios from "axios";
 
 function BookCard({ book, isPublic = false, onLoginRequired, onOpenDetail }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const navigate = useNavigate();
+  const token = getToken();
 
   const handleCardClick = () => {
     if (isPublic && onOpenDetail) {
@@ -26,10 +29,12 @@ function BookCard({ book, isPublic = false, onLoginRequired, onOpenDetail }) {
   };
 
 const handleConfirm = async () => {
+  setIsModalVisible(false);
   try {
     // Call API to send borrow request
-
-    setIsModalVisible(false);
+    await axios.post(`${process.env.REACT_APP_API_URL}/borrow-requests?bookId=${book.bookId}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
 
     message.success(
       `You have requested to borrow "${book.title}". Please wait until the owner approves your request.`,
