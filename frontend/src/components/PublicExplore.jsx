@@ -137,7 +137,9 @@ function PublicExplore({ isPublic = false, onLoginRequired, onOpenDetail, onOpen
         ) : (
             // Books exist - show grid
             <div 
-              className={`grid grid-cols-1 sm:grid-cols-2 md:${isPublic ? "grid-cols-5" : "grid-cols-4"} gap-6`}
+              className={`grid grid-cols-1 sm:grid-cols-2 ${
+                isPublic ? "md:grid-cols-5" : "md:grid-cols-4"
+              } gap-6`}
             >
             {filteredBooks.map((book) => (
                 <BookCard
