@@ -60,10 +60,10 @@ function PublicExplore({ isPublic = false, onLoginRequired, onOpenDetail, onOpen
   };
 
   return (
-    <div className="p-4">
+    <div className="p-2 ">
 
       {/* Search Filters */}
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
+      <div className="flex flex-col md:flex-row gap-4 mb-6 justify-center">
         <input
           type="text"
           placeholder="Search books..."
@@ -106,7 +106,7 @@ function PublicExplore({ isPublic = false, onLoginRequired, onOpenDetail, onOpen
         </button>
       </div>
 
-        <div className="min-h-[60vh] flex flex-col justify-center">
+        <div className="min-h-[60vh] flex justify-center">
         {filteredBooks.length === 0 ? (
             <div className="min-h-[50vh] flex flex-col items-center justify-center text-center">
             {isPublic ? (
@@ -136,7 +136,9 @@ function PublicExplore({ isPublic = false, onLoginRequired, onOpenDetail, onOpen
             </div>
         ) : (
             // Books exist - show grid
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <div 
+              className={`grid grid-cols-1 sm:grid-cols-2 md:${isPublic ? "grid-cols-5" : "grid-cols-4"} gap-6`}
+            >
             {filteredBooks.map((book) => (
                 <BookCard
                 key={book.bookId}
