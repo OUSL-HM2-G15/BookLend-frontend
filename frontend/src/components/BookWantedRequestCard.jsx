@@ -1,6 +1,6 @@
 import React from "react";
 
-const BookWantedRequestCard = ({ title, requester, location, author, createdDate }) => {
+const BookWantedRequestCard = ({ requestId, title, requester, location, author, createdDate, onRespond  }) => {
   return (
     <div className="w-full bg-white border rounded-lg p-5 shadow-sm">
       <p className="text-gray-800 leading-relaxed">
@@ -21,6 +21,12 @@ const BookWantedRequestCard = ({ title, requester, location, author, createdDate
       <p className="text-gray-500 text-sm mt-2">
         If you have this book, you can add it to your library and {requester} will be able to find it.
       </p>
+      <button
+        onClick={() => onRespond(requestId)}
+        className="mt-3 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+      >
+        Respond / Post Book
+      </button>
     </div>
   );
 };

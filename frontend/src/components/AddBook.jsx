@@ -4,14 +4,14 @@ import { Modal, message, Spin } from "antd";
 import { IKUpload } from "imagekitio-react";
 import { getToken } from "../utils/authToken";
 
-export default function AddBookModal({ open, onClose, onSuccess }) {
-
+export default function AddBookModal({ open, onClose, onSuccess, autofillRequest }) {
   const API_URL = process.env.REACT_APP_API_URL;
 
   const [categories, setCategories] = useState([]);
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [imageUploading, setImageUploading] = useState(false);
+  
 
   const [bookData, setBookData] = useState({
     title: "",
@@ -47,6 +47,40 @@ export default function AddBookModal({ open, onClose, onSuccess }) {
     fetchData();
   }, [open]);
 
+  // ---------------- Autofill for responding to request ----------------
+  useEffect(() => {
+    if (!open) return;
+console.log("Autofill Request:", autofillRequest);
+    if (autofillRequest) {
+      
+      // Pre-fill relevant fields for request
+      setBookData(prev => ({
+        ...prev,
+        title: autofillRequest.title || "",
+        author: autofillRequest.author || "",
+        available_location_id: autofillRequest.locationId || "",
+        // keep other fields default (status, fee_per_week, isbn, etc.)
+      }));
+    } else {
+      // Reset for new book
+      setBookData({
+        title: "",
+        author: "",
+        description: "",
+        category_id: "",
+        fee_per_week: "",
+        status: "Available",
+        available_location_id: "",
+        imageFile: null,
+        image_url: "",
+        isbn: "",
+        published_year: "",
+      });
+    }
+  }, [open, autofillRequest]);
+
+  // ---------------- Handlers ----------------
+
   const handleChange = (e) => {
     setBookData({ ...bookData, [e.target.name]: e.target.value });
   };
@@ -59,6 +93,9 @@ export default function AddBookModal({ open, onClose, onSuccess }) {
         imageFile: file 
     }));
   };
+
+   // Check if fields are disabled due to autofill (book request response case)
+  const isDisabled = !!autofillRequest;
 
   const handleAddBook = async () => {
   // Frontend validation
@@ -124,6 +161,16 @@ export default function AddBookModal({ open, onClose, onSuccess }) {
     
     message.success("Book added successfully!");
 
+    if (autofillRequest?.bookRequestId) {
+        await axios.put(
+          `${API_URL}/book-requests/${autofillRequest.bookRequestId}/update-status`,
+          { status: "This book is available now" },
+          { headers: { Authorization: `Bearer ${getToken()}` } }
+        );
+      }
+
+      message.success("Book added and request status updated!");
+
     // Reset form
     setBookData({
       title: "",
@@ -187,6 +234,7 @@ export default function AddBookModal({ open, onClose, onSuccess }) {
                 onChange={handleChange}
                 maxLength={150}
                 className="w-full border rounded-lg px-4 py-2"
+                disabled={isDisabled}  // Disable if autofillRequest is provided
                 required
               />
             </div>
@@ -202,6 +250,7 @@ export default function AddBookModal({ open, onClose, onSuccess }) {
                 onChange={handleChange}
                 maxLength={100}
                 className="w-full border rounded-lg px-4 py-2"
+                disabled={isDisabled}  // Disable if autofillRequest is provided
                 required
               />
             </div>
@@ -254,6 +303,7 @@ export default function AddBookModal({ open, onClose, onSuccess }) {
                 value={bookData.available_location_id}
                 onChange={handleChange}
                 className="w-full border rounded-lg px-4 py-2"
+                disabled={isDisabled}  // Disable if autofillRequest is provided
                 required
               >
                 <option value="">Select Location</option>
