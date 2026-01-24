@@ -4,6 +4,7 @@ import { Tabs, message } from "antd";
 import LendedBookCard from "../components/LendedBookCard";
 import BookWantedRequestCard from "../components/BookWantedRequestCard";
 import AddBookModal from "../components/AddBook";
+import { getErrorMessage } from "../utils/ErrorMessage";
 
 const { TabPane } = Tabs;
 
@@ -18,12 +19,6 @@ const RequestsReceived = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [autofillRequest, setAutofillRequest] = useState(null);
 
-  const errorMessages = {
-    401: "Session expired. Please log in.",
-    403: "You don’t have permission to view this.",
-    404: "Book request not found.",
-    500: "Server error. Please try again later.",
-  };
 
   // ---------------- Fetch Data ----------------
 
@@ -131,10 +126,8 @@ const RequestsReceived = () => {
       setModalOpen(true);
     } catch (err) {
       console.error(err);
-      const msg =
-        err.response?.status && errorMessages[err.response.status]
-          ? errorMessages[err.response.status]
-          : "Network error. Check your connection.";
+      // use error message
+      const msg = getErrorMessage(err.response?.status);
       message.error(msg);
     }
   };
