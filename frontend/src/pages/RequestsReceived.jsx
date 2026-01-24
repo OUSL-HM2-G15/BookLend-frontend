@@ -3,7 +3,7 @@ import axios from "axios";
 import { Tabs, message } from "antd";
 import LendedBookCard from "../components/LendedBookCard";
 import BookWantedRequestCard from "../components/BookWantedRequestCard";
-import AddBookModal from "../components/AddBook"; 
+import AddBookModal from "../components/AddBook";
 
 const { TabPane } = Tabs;
 
@@ -14,7 +14,7 @@ const RequestsReceived = () => {
   const [wantedRequests, setWantedRequests] = useState([]);
   const [rejectedBorrowRequests, setRejectedBorrowRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   const [modalOpen, setModalOpen] = useState(false);
   const [autofillRequest, setAutofillRequest] = useState(null);
 
@@ -94,45 +94,67 @@ const RequestsReceived = () => {
 
   // ---------------- Handle Respond / Autofill ----------------
   const handleRespond = async (requestId) => {
-  if (!requestId) {
-    message.error("Invalid request ID");
-      console.log("Fetching request details for ID: " + requestId);
-    return;
-  }
+    if (!requestId) {
+      message.error("Invalid request");
+      return;
+    }
 
-  const token = localStorage.getItem("token");
-  if (!token) {
-    message.error("Not logged in");
-    return;
-  }
+    const token = localStorage.getItem("token");
+    if (!token) {
+      message.error("Please log in to continue");
+      return;
+    }
 
-  try {
-   const res = await axios.get(`${API_URL}/book-requests/${requestId}`, {
-  headers: { Authorization: `Bearer ${token}` },
-});
+    try {
+      const res = await axios.get(`${API_URL}/book-requests/${requestId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    if (res.status !== 200) throw new Error("Request not found");
-    const { title, author, location } = res.data;
-    const locationId = location?.locationId; 
-    // Pass autofilled request data to modal
-    setAutofillRequest({
-      requestId,  // Needed to update status later
-      title,
-      author,
-      locationId,
-    });
+      const { title, author, location } = res.data;
+      const locationId = location?.locationId;
+      // Pass autofilled request data to modal
+      setAutofillRequest({
+        requestId,  // Needed to update status later
+        title,
+        author,
+        locationId,
+      });
 
-    // Open modal
-    setModalOpen(true);
-  } catch (err) {
-    console.error("Failed to fetch request details:", err);
-    message.error("Failed to fetch request details");
-  }
-};
+      // Open modal
+      setModalOpen(true);
+    } catch (err) {
+      // User notifications
+      if (err.response) {
+        switch (err.response.status) {
+          case 401:
+            message.error("Your session has expired. Please log in again.");
+            break;
+
+          case 404:
+            message.error("This book request no longer exists.");
+            break;
+
+          case 403:
+            message.error("You are not allowed to view this request.");
+            break;
+
+          case 500:
+            message.error("Server error. Please try again later.");
+            break;
+
+          default:
+            message.error(err.response.data?.message || "Failed to fetch request details.");
+        }
+      } else {
+        // Network or timeout or etc
+        message.error("Network error. Please check your internet connection.");
+      }
+    }
+  };
 
 
 
-   const handleSuccess = () => {
+  const handleSuccess = () => {
     fetchRequests();
   };
 
