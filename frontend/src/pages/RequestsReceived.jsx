@@ -18,6 +18,13 @@ const RequestsReceived = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [autofillRequest, setAutofillRequest] = useState(null);
 
+  const errorMessages = {
+    401: "Session expired. Please log in.",
+    403: "You don’t have permission to view this.",
+    404: "Book request not found.",
+    500: "Server error. Please try again later.",
+  };
+
   // ---------------- Fetch Data ----------------
 
   const fetchRequests = async () => {
@@ -123,32 +130,12 @@ const RequestsReceived = () => {
       // Open modal
       setModalOpen(true);
     } catch (err) {
-      // User notifications
-      if (err.response) {
-        switch (err.response.status) {
-          case 401:
-            message.error("Your session has expired. Please log in again.");
-            break;
-
-          case 404:
-            message.error("This book request no longer exists.");
-            break;
-
-          case 403:
-            message.error("You are not allowed to view this request.");
-            break;
-
-          case 500:
-            message.error("Server error. Please try again later.");
-            break;
-
-          default:
-            message.error(err.response.data?.message || "Failed to fetch request details.");
-        }
-      } else {
-        // Network or timeout or etc
-        message.error("Network error. Please check your internet connection.");
-      }
+      console.error(err);
+      const msg =
+        err.response?.status && errorMessages[err.response.status]
+          ? errorMessages[err.response.status]
+          : "Network error. Check your connection.";
+      message.error(msg);
     }
   };
 
