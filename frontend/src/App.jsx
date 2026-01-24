@@ -5,6 +5,9 @@ import { IKContext } from "imagekitio-react"; // to access imagekit.io globally
 import Home from "./pages/Home";
 import { Result, Button } from "antd";
 import ProtectedRoute from "./components/ProtectedRoute"
+import AboutSection from "./pages/AboutSection";
+import TermsOfService from "./pages/TermsOfService";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 function App() {
   const [user, setUser] = useState(undefined); // Initial value of user
@@ -81,7 +84,6 @@ function App() {
         try {
           const res = await fetch(`${API_URL}/imagekit/auth`);
           const data = await res.json();
-          console.log("ImageKit auth:", data);
           return data;
         } catch (err) {
           console.error("Auth error:", err);
@@ -91,19 +93,21 @@ function App() {
       <BrowserRouter>
         <Routes>
           {/* Default route → Home page */}
-          <Route path="/" element={<Home onLoginSuccess={fetchProfile}/>} /> 
+          <Route path="/" element={<Home onLoginSuccess={fetchProfile} />} />
 
           {/* SAME Home, different URLs */}
-          <Route path="/login" element={<Home onLoginSuccess={fetchProfile}/>} />
+          <Route path="/login" element={<Home onLoginSuccess={fetchProfile} />} />
           <Route path="/register" element={<Home onLoginSuccess={fetchProfile} />} />
-
+          <Route path="/about" element={<AboutSection />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/privacy-policy"element={<PrivacyPolicy />} />
           {/* Dashboard (all nested paths handled inside Dashboard.jsx) */}
-          <Route 
-          path="/dashboard/*"
-          element={
-                <ProtectedRoute user={user}>
-                  <Dashboard user={user} onLogout={handleLogout} />
-                </ProtectedRoute>
+          <Route
+            path="/dashboard/*"
+            element={
+              <ProtectedRoute user={user}>
+                <Dashboard user={user} onLogout={handleLogout} />
+              </ProtectedRoute>
             }
           />
 

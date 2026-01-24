@@ -57,6 +57,7 @@ const RequestPosted = () => {
   };
 
 
+
   // fetch history requests (all statuses)
   const fetchHistory = async () => {
     try {
@@ -133,6 +134,29 @@ const RequestPosted = () => {
     setRequests((prevRequests) =>
       prevRequests.filter((request) => request.bookRequestId !== requestId)
     );
+  };
+
+  // Handle Success after the book is added
+  const handleSuccess = async (autofillRequest) => {
+    try {
+      const token = localStorage.getItem("token");
+      const requestId = autofillRequest.bookRequestId;  // assuming autofillRequest holds the request data
+
+      // Make the call to mark the request as available
+      await axios.put(
+        `${process.env.REACT_APP_API_URL}/book-requests/${requestId}/mark-as-available`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      // Once the request status is updated, re-fetch the updated list of requests
+      message.success("Request marked as available now.");
+      fetchRequests();  // Re-fetch the requests to show the updated status
+
+    } catch (err) {
+      console.error("Error marking request as available", err);
+      message.error("Failed to mark request as available.");
+    }
   };
 
   // fetch requests on mount
@@ -283,7 +307,7 @@ const RequestPosted = () => {
 
       {/* new request modal */}
       {showPopup && (
-        <RequestModal onClose={() => setShowPopup(false)} onRequestCreated={fetchRequests} />
+        <RequestModal onClose={() => setShowPopup(false)} onRequestCreated={fetchRequests} onSuccess={handleSuccess} />
       )}
 
       {/* reusable confirm modal */}

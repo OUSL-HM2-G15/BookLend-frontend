@@ -3,6 +3,8 @@ import axios from "axios";
 import { Tabs, message } from "antd";
 import LendedBookCard from "../components/LendedBookCard";
 import BookWantedRequestCard from "../components/BookWantedRequestCard";
+import AddBookModal from "../components/AddBook";
+import { getErrorMessage } from "../utils/ErrorMessage";
 
 const { TabPane } = Tabs;
 
@@ -14,12 +16,17 @@ const RequestsReceived = () => {
   const [rejectedBorrowRequests, setRejectedBorrowRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [modalOpen, setModalOpen] = useState(false);
+  const [autofillRequest, setAutofillRequest] = useState(null);
+
+
   // ---------------- Fetch Data ----------------
 
   const fetchRequests = async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
+      if (!token) throw new Error("Not logged in");
       const [borrowRes, wantedRes] = await Promise.all([ // [borrowRes, wantedRes]
         axios.get(`${API_URL}/lended-books`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -32,7 +39,7 @@ const RequestsReceived = () => {
       setBorrowRequests(
         borrowRes.data.filter((b) => b.status === "Pending")
       );
-      
+
       setRejectedBorrowRequests(
         borrowRes.data.filter((b) => b.status === "Rejected")
       );
@@ -45,6 +52,7 @@ const RequestsReceived = () => {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     fetchRequests();
@@ -82,8 +90,52 @@ const RequestsReceived = () => {
     }
   };
 
-  const handleRespond = () => {
-    message.success("The requester has been notified!");
+  // const handleRespond = () => {
+  //   message.success("The requester has been notified!");
+  // };
+
+  // ---------------- Handle Respond / Autofill ----------------
+  const handleRespond = async (requestId) => {
+    if (!requestId) {
+      message.error("Invalid request");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      message.error("Please log in to continue");
+      return;
+    }
+
+    try {
+      const res = await axios.get(`${API_URL}/book-requests/${requestId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const { title, author, location } = res.data;
+      const locationId = location?.locationId;
+      // Pass autofilled request data to modal
+      setAutofillRequest({
+        requestId,  // Needed to update status later
+        title,
+        author,
+        locationId,
+      });
+
+      // Open modal
+      setModalOpen(true);
+    } catch (err) {
+      console.error(err);
+      // use error message
+      const msg = getErrorMessage(err.response?.status);
+      message.error(msg);
+    }
+  };
+
+
+
+  const handleSuccess = () => {
+    fetchRequests();
   };
 
   // ---------------- Render ----------------
@@ -150,19 +202,26 @@ const RequestsReceived = () => {
             <div className="space-y-4">
               {wantedRequests.map((req) => (
                 <BookWantedRequestCard
-                  key={req.bookRequestId}
+                  key={req.requestId}
+                  bookRequestId={req.requestId}
                   title={req.title}
                   requester={req.requesterName}
                   location={req.locationName}
                   author={req.author}
                   createdDate={req.createdAt}
-                  onRespond={handleRespond}
+                  onRespond={() => handleRespond(req.requestId)}
                 />
               ))}
             </div>
           )}
         </TabPane>
       </Tabs>
+      <AddBookModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSuccess={handleSuccess}
+        autofillRequest={autofillRequest} // Pass autofill request
+      />
     </div>
   );
 };
