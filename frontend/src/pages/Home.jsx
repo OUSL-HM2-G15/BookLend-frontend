@@ -1,88 +1,109 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import LoginModal from "../components/LoginModal";
 import RegisterModal from "../components/RegisterModal";
 import PublicHeader from "../components/PublicHeader";
 import Footer from "../components/Footer";
-import bookIllustration from "../assets/illustration-books.svg"; // adjust path if needed
+import PublicExplore from "../components/PublicExplore";
+import ForgotPasswordModal from "../components/ForgotPasswordModel";
+import ResetPasswordModal from "../components/ResetPasswordModal";
+import BookDetailPopUp from "../components/PublicBookDetail";
 
 
-export default function Home() {
+export default function Home({ onLoginSuccess }) {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [isForgotOpen, setForgotOpen] = useState(false);
+  const [isResetOpen, setResetOpen] = useState(false);
+  const [resetToken, setResetToken] = useState('');
+  const [selectedBook, setSelectedBook] = useState(null);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) navigate("/dashboard");
-  }, [navigate]);
+  const openLogin = () => {
+    setShowLogin(true);
+    setShowRegister(false);
+    navigate("/login");
+  };
 
-  const handleLoginSuccess = () => {
+  const openRegister = () => {
+    setShowRegister(true);
     setShowLogin(false);
-    navigate("/dashboard");
+    navigate("/register");
+  };
+
+  const closeAuth = () => {
+    setShowLogin(false);
+    setShowRegister(false);
+    navigate("/");
+  };
+
+  const handleLoginSuccess = async () => {
+    await onLoginSuccess(); // fetch user
+    navigate("/dashboard", {replace: true });
+  };
+
+  const handleLoginRequired = () => {
+    openLogin(); // open login modal
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Header */}
       <PublicHeader
-        onLoginClick={() => setShowLogin(true)}
-        onRegisterClick={() => setShowRegister(true)}
+        onLoginClick={openLogin}
+        onRegisterClick={openRegister}
       />
 
-{/* Main content */}
-<main className="flex-1 flex flex-col md:flex-row items-center justify-between px-6 lg:px-16 py-16 bg-gradient-to-r from-indigo-50 via-white to-indigo-100">
-  
-  {/* Left Section — Text Content */}
-  <div className="max-w-xl text-left space-y-6">
-    <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 leading-tight">
-      Welcome to <span className="text-indigo-600">BookLend</span>
-    </h1>
-    <p className="text-lg sm:text-xl text-gray-700">
-      A smart platform to borrow, lend, and manage your books seamlessly.
-      Discover new reads, connect with fellow book lovers, and organize your bookshelf effortlessly.
-    </p>
-    <div className="flex gap-4">
-      <button
-        onClick={() => setShowLogin(true)}
-        className="px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition font-medium"
-      >
-        Sign In
-      </button>
-    </div>
-  </div>
-
-  {/* Right Section — Simple Illustration or Decorative Element */}
-  <div className="hidden md:flex justify-center items-center">
-    <img
-      src={bookIllustration} 
-      alt="Books Illustration"
-      className="w-80 sm:w-96 lg:w-[500px] h-auto drop-shadow-lg"
-    />
-  </div>
-</main>
-
+      {/* Main content */}
+        <section className="pt-20 px-6 lg:px-16 pb-16">
+          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-indigo-600 text-center">
+            👋 Hello, Book Lover! Find Something New
+          </h2>
+          <PublicExplore
+            isPublic={true}
+            onLoginRequired={() => setShowLogin(true)}
+            onOpenDetail={(book) => setSelectedBook(book)} // open BookDetailPopUp
+          />
+        </section>
 
       {/* Login Modal */}
       <LoginModal
         isOpen={showLogin}
-        onClose={() => setShowLogin(false)}
-        onOpenRegister={() => {
-          setShowLogin(false);
-          setShowRegister(true);
-        }}
+        onClose={closeAuth}
+        onOpenRegister={openRegister}
         onLoginSuccess={handleLoginSuccess}
+        onOpenForgot={() => setForgotOpen(true)}
+        
       />
 
       {/* Register Modal */}
       <RegisterModal
         isOpen={showRegister}
-        onClose={() => setShowRegister(false)}
-        onOpenLogin={() => {
-          setShowRegister(false);
-          setShowLogin(true);
+        onClose={closeAuth}
+        onOpenLogin={openLogin}
+      />
+      <ForgotPasswordModal
+        isOpen={isForgotOpen}
+        onClose={() => setForgotOpen(false)}
+        onOpenReset={(token) => {
+          setResetToken(token);
+          setResetOpen(true);
         }}
       />
+
+      <ResetPasswordModal
+        isOpen={isResetOpen}
+        onClose={() => setResetOpen(false)}
+        token={resetToken}
+      />
+
+      {selectedBook && (
+        <BookDetailPopUp
+          book={selectedBook}
+          onClose={() => setSelectedBook(null)}
+        />
+      )}
 
       {/* Footer */}
       <Footer />

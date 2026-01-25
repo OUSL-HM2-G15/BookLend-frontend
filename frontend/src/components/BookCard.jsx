@@ -2,21 +2,39 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfirmModal from "../components/ConfirmModal";
 import { message } from "antd";
+import { getToken } from "../utils/authToken";
+import axios from "axios";
 
-function BookCard({ book }) {
+function BookCard({ book, isPublic = false, onLoginRequired, onOpenDetail }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const navigate = useNavigate();
+  const token = getToken();
 
-  const handleBorrowClick = () => {
-    setIsModalVisible(true);
+  const handleCardClick = () => {
+    if (isPublic && onOpenDetail) {
+      onOpenDetail(book);  // open popup
+    } else {
+      navigate(`${book.bookId}`); // navigate
+    }
+  };
+
+  const handleBorrowClick = (e) => {
+    e.stopPropagation(); // Prevent card click
+    if (isPublic && onLoginRequired) {
+        onLoginRequired(); // open login modal
+      } else {
+        setIsModalVisible(true); // dashboard behavior
+      }
   };
 
 const handleConfirm = async () => {
+  setIsModalVisible(false);
   try {
     // Call API to send borrow request
-
-    setIsModalVisible(false);
+    await axios.post(`${process.env.REACT_APP_API_URL}/borrow-requests?bookId=${book.bookId}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
 
     message.success(
       `You have requested to borrow "${book.title}". Please wait until the owner approves your request.`,
@@ -33,11 +51,11 @@ const handleConfirm = async () => {
       className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:shadow-xl cursor-pointer
       transform transition-all duration-200 ease-in-out
       hover:-translate-y-1
-      active:scale-[0.98]"
-      onClick={() => navigate(`/books/${book.bookId}`)}>
+      active:scale-[0.98] w-64"
+      onClick={handleCardClick}>
         
         {/* Book Image */}
-        <div className="h-48 w-full overflow-hidden rounded-lg bg-gray-100">
+        <div className="h-72 w-full overflow-hidden rounded-lg bg-gray-100">
           <img
             src={book.imageUrl || "https://via.placeholder.com/150"} 
             alt={book.title}
@@ -66,16 +84,14 @@ const handleConfirm = async () => {
         {/* Borrow Button */}
         <button
           className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition"
-            onClick={(e) => {  
-                e.stopPropagation();
-                handleBorrowClick();
-            }}
+            onClick={handleBorrowClick}
         >
           Borrow Request
         </button>
       </div>
 
-      {/* Ant Design Modal */}
+      {/* Dashboard Confirm Modal */}
+      {!isPublic && (
       <ConfirmModal
         title="Confirm Borrow"
         open={isModalVisible}
@@ -88,6 +104,7 @@ const handleConfirm = async () => {
         onConfirm={handleConfirm}
         onCancel={() => setIsModalVisible(false)}
       />
+      )}
     </>
   );
 }
