@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams, Link, useLocation } from "react-router-dom";
+import { useParams, useNavigate , useLocation } from "react-router-dom";
 import ConfirmModal from "../components/ConfirmModal";
 import { message, Tooltip } from "antd";
 import { getToken } from "../utils/authToken";
@@ -14,6 +14,8 @@ const BookDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const navigate = useNavigate();
 
   // Determine if owner info should be visible
   const showOwnerInfo = location.state?.showOwnerInfo || false;
@@ -37,7 +39,7 @@ const BookDetails = () => {
       );
     } catch (err) {
       console.error(err);
-      message.error("Failed to send borrow request. Try again.");
+      message.error(err.response?.data || "Failed to send borrow request. Please try again later.");
     }
   };
 
@@ -186,12 +188,12 @@ const BookDetails = () => {
 
         {/* Back link */}
         <div className="flex justify-end max-w-6xl mx-auto px-6 pb-10">
-          <Link
-            to="/explore"
+          <button
+            onClick={() => navigate(-1)}
             className="text-blue-600 px-4 py-2 border rounded-lg bg-gray-70 hover:bg-gray-200 transition"
           >
-            ← Back to Dashboard
-          </Link>
+            ← Back
+          </button>
         </div>
       </main>
 

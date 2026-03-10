@@ -16,7 +16,7 @@ const MyBookCard = ({ book, onToggleStatus }) => {
   } = book;
 
   const handleCardClick = () => {
-    navigate(`/my-books/${book.id}`);
+    navigate(`${book.id}`);
   };
 
   const isAvailable = status === "Available";

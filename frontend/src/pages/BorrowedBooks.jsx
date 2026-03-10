@@ -200,8 +200,8 @@ const BorrowedBooks = () => {
 
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-semibold mb-8 text-black">My Borrowed Books</h1>
+    <div className="max-w-5xl mx-auto px-4 py-2">
+      <h1 className="text-3xl font-semibold mb-4 text-black">My Borrowed Books</h1>
       {/* Page description */}
       <p className="text-gray-600 mb-6">
         This is where the list of books you have borrowed will be displayed.
@@ -322,7 +322,7 @@ const BorrowedBooks = () => {
                       )}
                       {(book.status === "Accepted" || book.status === "Returned") && (
                         <Link
-                          to={`/books/${book.status === "Returned" ? book.bookId : book.requestId}`}
+                          to={`${book.status === "Returned" ? book.bookId : book.requestId}`}
                           state={{
                             showOwnerInfo: book.status === "Accepted",
                             hasActiveRequest: book.status === "Accepted" || book.status === "Pending"

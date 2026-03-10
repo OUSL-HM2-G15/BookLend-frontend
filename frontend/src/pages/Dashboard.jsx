@@ -9,43 +9,32 @@ import RequestsPosted from "./RequestPosted";
 import BookDetails from "./BookDetails";
 import MyBookDetails from "./MyBookDetails";
 import ProfilePage from "./ProfilePage";
-import { Result, Button } from "antd";
 
 export default function Dashboard({ user, onLogout }) {
   return (
     <Routes>
       <Route element={<DashboardLayout user={user} onLogout={onLogout} />}>
-        <Route index element={<Navigate to="explore" replace />} /> {/* default page */}
+        {/* Default page */}
+        <Route index element={<Navigate to="explore" replace />} />
         <Route path="explore" element={<Explore />} />
+
+        {/* Book detail - user view - with hidden data*/}
+        <Route path="explore/:id" element={<BookDetails />} />
+
+        {/* Book detail - user view - with contact infor*/}
+        <Route path="my-borrowed-books/:id" element={<BookDetails />} />
+
         <Route path="my-books" element={<MyBooks />} />
         <Route path="my-borrowed-books" element={<BorrowedBooks />} />
         <Route path="my-lended-books" element={<MyLendedBooks />} />
         <Route path="requests-received" element={<RequestsReceived />} />
         <Route path="requests-posted" element={<RequestsPosted />} />
 
-        {/* Book detail - user view */}
-        <Route path="books/:id" element={<BookDetails />} />
-
-        {/* Book detail - owner view */}
-        <Route path="my-books/:id" element={<MyBookDetails />} />
+        {/* Book detail - owner view - for CRUD */}
+        <Route path="my-books/:id" element={<MyBookDetails />}  />
 
         {/* Profile Page */}
-        <Route path="profile" element={<ProfilePage />} />
-
-        {/* Catch-all for invalid paths */}
-        {/* 404 Page (Ant Design) */}
-        <Route path="*" element={
-          <Result status="404"
-            title="404"
-            subTitle="Sorry, the page you visited does not exist."
-            extra={
-              <Button type="primary">
-                <Link to="/">Back Home</Link>
-              </Button>
-            }
-          />
-        }
-        />
+        <Route path="profile" element={<ProfilePage />}  />
 
       </Route>
     </Routes>

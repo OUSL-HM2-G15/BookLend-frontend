@@ -1,19 +1,31 @@
 import React from "react";
 
-const BookWantedRequestCard = ({ title, requester, location, onRespond }) => {
+const BookWantedRequestCard = ({ requestId, title, requester, location, author, createdDate, onRespond  }) => {
   return (
-    <div className="w-full bg-white border rounded-lg p-5 shadow-sm flex flex-col sm:flex-row sm:justify-between sm:items-center">
-      <div className="space-y-1">
-        <p className="font-semibold text-lg">{title}</p>
-        <p className="text-gray-600">Requested by: {requester}</p>
-        <p className="text-gray-500 text-sm">Location: {location}</p>
+    <div className="w-full bg-white border rounded-lg p-5 shadow-sm">
+      <p className="text-gray-800 leading-relaxed">
+        <span className="font-semibold">{requester}</span> is looking for the book{" "}
+        <span className="font-semibold">"{title}"</span>
+        {author && (
+          <>
+            {" "}by <span className="font-semibold">{author}</span>
+          </>
+        )}
+        . This request was posted from{" "}
+        <span className="font-medium">{location}</span>.
+      </p>
+      <div>
+        <p>Requested On: <span className="font-medium">{createdDate}</span></p>
       </div>
 
+      <p className="text-gray-500 text-sm mt-2">
+        If you have this book, you can add it to your library and {requester} will be able to find it.
+      </p>
       <button
-        onClick={onRespond}
-        className="mt-3 sm:mt-0 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+        onClick={() => onRespond(requestId)}
+        className="mt-3 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
       >
-        Post Book
+        Respond / Post Book
       </button>
     </div>
   );
