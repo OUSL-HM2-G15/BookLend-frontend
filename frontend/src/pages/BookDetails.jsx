@@ -39,7 +39,7 @@ const BookDetails = () => {
       );
     } catch (err) {
       console.error(err);
-      message.error("Failed to send borrow request. Try again.");
+      message.error(err.response?.data || "Failed to send borrow request. Please try again later.");
     }
   };
 
